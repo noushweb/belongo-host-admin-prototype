@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belongo — Financials (a02)</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23D4AF37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/belongo-shared.css">
+<style>
+/* a02 · FINANCIALS — admin shell + .ad-* (cloned from a01) + platform P&L.
+   ponytail: ad-* kpi/chart CSS duplicated from a01 (promote to shared if a03 matches). Numbers reconcile: 450K−314K=136K. */
+body { background: var(--color-soft-beige); }
+.ad-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); margin-bottom: var(--space-6); }
+.ad-kpi { background: #fff; border: 1px solid rgba(107,114,128,0.14); border-radius: var(--radius-xl); padding: var(--space-5); box-shadow: var(--shadow-xs); }
+.ad-kpi span { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-warm-gray); }
+.ad-kpi b { display: block; font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 800; letter-spacing: -0.02em; margin-top: var(--space-2); }
+.ad-kpi .delta { font-family: var(--font-mono); font-size: var(--text-xs); margin-top: var(--space-1); }
+.ad-kpi .delta.up { color: var(--color-success); }
+.ad-card { background: #fff; border: 1px solid rgba(107,114,128,0.14); border-radius: var(--radius-xl); box-shadow: var(--shadow-xs); padding: var(--space-6); margin-bottom: var(--space-6); }
+.ad-card-head { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-5); }
+.ad-card-head h3 { font-family: var(--font-display); font-size: var(--text-md); font-weight: 700; }
+.ad-card-head .link { margin-left: auto; font-size: var(--text-xs); font-weight: 600; color: var(--color-info); }
+.ad-trend { display: flex; align-items: flex-end; gap: var(--space-4); height: 170px; }
+.ad-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: var(--space-2); height: 100%; justify-content: flex-end; }
+.ad-col .fill { width: 100%; max-width: 46px; background: var(--color-soft-beige); border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+.ad-col.now .fill { background: var(--color-midnight-navy); }
+.ad-col:hover .fill { background: var(--color-soft-gold); }
+.ad-col .m { font-family: var(--font-mono); font-size: 10px; color: var(--color-warm-gray); }
+.ad-trend-foot { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid rgba(107,114,128,0.1); display: flex; justify-content: space-between; align-items: baseline; }
+.ad-trend-foot b { font-family: var(--font-display); font-weight: 800; font-size: var(--text-lg); }
+.ad-trend-foot span { font-size: var(--text-xs); color: var(--color-warm-gray); }
+.ad-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+.ad-ctry { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) 0; border-bottom: 1px solid rgba(107,114,128,0.1); }
+.ad-ctry:last-child { border-bottom: none; }
+.ad-cc { width: 34px; height: 26px; border-radius: var(--radius-sm); background: var(--color-midnight-navy); color: var(--color-soft-gold); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: var(--text-xs); flex-shrink: 0; }
+.ad-ctry-main { flex: 1; min-width: 0; }
+.ad-ctry-top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 5px; }
+.ad-ctry-top b { font-size: var(--text-sm); font-weight: 600; }
+.ad-ctry-top .gmv { font-family: var(--font-display); font-weight: 700; font-size: var(--text-sm); }
+.ad-bar2 { height: 6px; background: var(--color-soft-beige); border-radius: var(--radius-full); overflow: hidden; }
+.ad-bar2 i { display: block; height: 100%; background: var(--color-soft-gold); border-radius: var(--radius-full); }
+.fn-pnl-row { display: flex; align-items: baseline; justify-content: space-between; padding: var(--space-3) 0; border-bottom: 1px dashed rgba(107,114,128,0.18); font-size: var(--text-sm); }
+.fn-pnl-row .lab { color: var(--color-deep-slate); }
+.fn-pnl-row.minus .val, .fn-pnl-row.minus .lab { color: var(--color-warm-gray); }
+.fn-pnl-row .val { font-family: var(--font-mono); }
+.fn-pnl-row.total { border-bottom: none; border-top: 2px solid var(--color-midnight-navy); margin-top: var(--space-2); padding-top: var(--space-4); }
+.fn-pnl-row.total .lab { font-weight: 700; }
+.fn-pnl-row.total .val { font-family: var(--font-display); font-weight: 800; font-size: var(--text-lg); color: var(--color-success); }
+.hs-switch-ava.globe { background: var(--color-deep-slate); color: var(--color-soft-gold); }
+@media (max-width: 1024px) { .ad-kpis { grid-template-columns: 1fr 1fr; } .ad-split { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .ad-kpis { grid-template-columns: 1fr 1fr; gap: var(--space-3); } }
+</style>
+</head>
+<body>
+
+<aside class="hs-sidebar" id="hs-sidebar">
+  <div class="hs-side-logo">
+    <img src="assets/brand/belongo-logo-ondark.svg" alt="Belongo">
+    <span class="tag badge badge-premium">ADMIN</span>
+  </div>
+  <div class="hs-switch">
+    <button class="hs-switch-btn" type="button" data-switcher aria-haspopup="true" aria-expanded="false">
+      <span class="hs-switch-ava globe">◍</span>
+      <span class="hs-switch-meta"><b>All countries</b><span>6 markets · 365 properties</span></span>
+      <span class="hs-switch-caret">▾</span>
+    </button>
+    <div class="hs-switch-menu" id="hs-switch-menu">
+      <div class="hs-switch-item is-active">All countries <span class="dot"></span></div>
+      <div class="hs-switch-item">United Arab Emirates <span class="dot"></span></div>
+      <div class="hs-switch-item">Saudi Arabia <span class="dot"></span></div>
+      <div class="hs-switch-item">Qatar <span class="dot"></span></div>
+      <div class="hs-switch-item">Oman <span class="dot"></span></div>
+      <div class="hs-switch-item">Bahrain <span class="dot"></span></div>
+      <div class="hs-switch-item">Kuwait <span class="dot"></span></div>
+    </div>
+  </div>
+  <nav class="hs-nav">
+    <a class="hs-nav-link" href="belongo-a01-admin-dashboard.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+      Overview
+    </a>
+    <a class="hs-nav-link is-active" href="belongo-a02-financials.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 13h12M4 13V8M7.5 13V4M11 13V9.5"/></svg>
+      Financials
+    </a>
+    <a class="hs-nav-link" href="belongo-a03-occupancy.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"/></svg>
+      Occupancy
+    </a>
+    <div class="hs-nav-sec">Operations</div>
+    <a class="hs-nav-link" href="belongo-a04-users-roles.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="6" cy="5.5" r="2.3"/><path d="M2.3 13.5c0-2.3 1.7-3.7 3.7-3.7s3.7 1.4 3.7 3.7"/><path d="M10.5 4.2a2.2 2.2 0 0 1 0 4.3M11.2 9.9c1.6.3 2.7 1.6 2.7 3.6"/></svg>
+      Users &amp; roles
+    </a>
+    <a class="hs-nav-link" href="belongo-a05-expenses.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 2h8l2 2v10l-2-1-1.5 1L8 13l-1.5 1L5 13l-2 1z"/><path d="M5.5 6h5M5.5 9h3"/></svg>
+      Expenses
+    </a>
+    <a class="hs-nav-link" href="belongo-a06-reports.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 2h6l3 3v9H4z"/><path d="M9.5 2v3.5H13M6 8.5h4M6 11h4"/></svg>
+      Reports
+    </a>
+  </nav>
+  <div class="hs-side-foot">
+    <a class="hs-nav-link" href="https://noushweb.github.io/belongo-client-prototype/belongo-g15-contact.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><path d="M6.2 6.2a1.9 1.9 0 1 1 2.6 2.4c-.5.4-.8.6-.8 1.2"/><circle cx="8" cy="11.6" r="0.5" fill="currentColor" stroke="none"/></svg>
+      Help &amp; support
+    </a>
+    <a class="hs-nav-link" href="https://noushweb.github.io/belongo-client-prototype/belongo-g11-account-settings.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.5v1.8M8 12.7v1.8M14.5 8h-1.8M3.3 8H1.5M12.6 3.4l-1.3 1.3M4.7 11.3l-1.3 1.3M12.6 12.6l-1.3-1.3M4.7 4.7L3.4 3.4"/></svg>
+      Settings
+    </a>
+    <a class="hs-account" href="https://noushweb.github.io/belongo-client-prototype/belongo-g11-account-settings.html">
+      <span class="hs-account-ava">YD</span>
+      <span class="hs-account-meta"><b>Yusuf Demir</b><span>Platform admin</span></span>
+      <span class="out">⇲</span>
+    </a>
+  </div>
+</aside>
+<div class="hs-overlay" data-close-sidebar></div>
+
+<div class="hs-main">
+  <header class="hs-topbar">
+    <button class="hs-burger" type="button" data-toggle-sidebar aria-label="Open menu"><span></span><span></span><span></span></button>
+    <div class="hs-title">
+      <h1>Financials</h1>
+      <p>Platform P&amp;L · all markets · September 2026</p>
+    </div>
+    <div class="hs-top-actions">
+      <span class="hs-datepill">Sep 2026 ▾</span>
+      <button class="hs-bell" type="button" aria-label="Notifications">🔔<span class="dot"></span></button>
+      <a class="btn btn-secondary btn-sm" href="belongo-a06-reports.html"><span class="hs-addlabel">Export</span> ↧</a>
+    </div>
+  </header>
+
+  <main class="hs-content">
+    <section class="ad-kpis">
+      <div class="ad-kpi"><span>GMV processed</span><b>AED 4.50M</b><div class="delta up">▲ 9% vs Aug</div></div>
+      <div class="ad-kpi"><span>Commission revenue</span><b>AED 450K</b><div class="delta up">▲ 9%</div></div>
+      <div class="ad-kpi"><span>Take rate</span><b>10.0%</b><div class="delta">platform standard</div></div>
+      <div class="ad-kpi"><span>Net profit</span><b>AED 136K</b><div class="delta up">▲ 11%</div></div>
+    </section>
+
+    <div class="ad-card">
+      <div class="ad-card-head"><h3>Commission revenue — last 6 months</h3></div>
+      <div class="ad-trend">
+        <div class="ad-col"><div class="fill" style="height:80%"></div><span class="m">Apr</span></div>
+        <div class="ad-col"><div class="fill" style="height:84%"></div><span class="m">May</span></div>
+        <div class="ad-col"><div class="fill" style="height:89%"></div><span class="m">Jun</span></div>
+        <div class="ad-col"><div class="fill" style="height:93%"></div><span class="m">Jul</span></div>
+        <div class="ad-col"><div class="fill" style="height:96%"></div><span class="m">Aug</span></div>
+        <div class="ad-col now"><div class="fill" style="height:100%"></div><span class="m">Sep</span></div>
+      </div>
+      <div class="ad-trend-foot"><div><b>AED 2.44M</b> <span>· 6 months commission</span></div><span style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-success)">▲ 5%/mo</span></div>
+    </div>
+
+    <div class="ad-split">
+      <div class="ad-card" style="margin-bottom:0">
+        <div class="ad-card-head"><h3>Platform P&amp;L · September</h3></div>
+        <div class="fn-pnl-row"><span class="lab">Commission revenue (10% of GMV)</span><span class="val">AED 450,000</span></div>
+        <div class="fn-pnl-row minus"><span class="lab">− Payment processing (2.4%)</span><span class="val">−108,000</span></div>
+        <div class="fn-pnl-row minus"><span class="lab">− Cloud &amp; infrastructure</span><span class="val">−38,000</span></div>
+        <div class="fn-pnl-row minus"><span class="lab">− Support &amp; operations</span><span class="val">−96,000</span></div>
+        <div class="fn-pnl-row minus"><span class="lab">− Marketing &amp; growth</span><span class="val">−72,000</span></div>
+        <div class="fn-pnl-row total"><span class="lab">Net profit</span><span class="val">AED 136,000</span></div>
+      </div>
+
+      <div class="ad-card" style="margin-bottom:0">
+        <div class="ad-card-head"><h3>Commission by country · Sep</h3><a class="link" href="belongo-a01-admin-dashboard.html">Overview →</a></div>
+        <div class="ad-ctry"><span class="ad-cc">AE</span><div class="ad-ctry-main"><div class="ad-ctry-top"><b>United Arab Emirates</b><span class="gmv">AED 184K</span></div><div class="ad-bar2"><i style="width:100%"></i></div></div></div>
+        <div class="ad-ctry"><span class="ad-cc">SA</span><div class="ad-ctry-main"><div class="ad-ctry-top"><b>Saudi Arabia</b><span class="gmv">AED 121K</span></div><div class="ad-bar2"><i style="width:66%"></i></div></div></div>
+        <div class="ad-ctry"><span class="ad-cc">QA</span><div class="ad-ctry-main"><div class="ad-ctry-top"><b>Qatar</b><span class="gmv">AED 72K</span></div><div class="ad-bar2"><i style="width:39%"></i></div></div></div>
+        <div class="ad-ctry"><span class="ad-cc">OM</span><div class="ad-ctry-main"><div class="ad-ctry-top"><b>Oman</b><span class="gmv">AED 34K</span></div><div class="ad-bar2"><i style="width:18%"></i></div></div></div>
+        <div class="ad-ctry"><span class="ad-cc">BH</span><div class="ad-ctry-main"><div class="ad-ctry-top"><b>Bahrain</b><span class="gmv">AED 21K</span></div><div class="ad-bar2"><i style="width:11%"></i></div></div></div>
+        <div class="ad-ctry"><span class="ad-cc">KW</span><div class="ad-ctry-main"><div class="ad-ctry-top"><b>Kuwait</b><span class="gmv">AED 18K</span></div><div class="ad-bar2"><i style="width:10%"></i></div></div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/belongo-shared.js" defer></script>
+<script>
+(function () {
+  var sb = document.getElementById('hs-sidebar');
+  var ov = document.querySelector('.hs-overlay');
+  function close() { sb.classList.remove('is-open'); ov.classList.remove('is-on'); }
+  document.querySelectorAll('[data-toggle-sidebar]').forEach(function (b) {
+    b.addEventListener('click', function () { sb.classList.toggle('is-open'); ov.classList.toggle('is-on'); });
+  });
+  document.querySelectorAll('[data-close-sidebar]').forEach(function (b) { b.addEventListener('click', close); });
+  var sw = document.querySelector('[data-switcher]');
+  var menu = document.getElementById('hs-switch-menu');
+  if (sw && menu) {
+    sw.addEventListener('click', function (e) { e.stopPropagation(); var on = menu.classList.toggle('is-on'); sw.setAttribute('aria-expanded', on ? 'true' : 'false'); });
+    document.addEventListener('click', function () { menu.classList.remove('is-on'); sw.setAttribute('aria-expanded', 'false'); });
+  }
+})();
+</script>
+</body>
+</html>

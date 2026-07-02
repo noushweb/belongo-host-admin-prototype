@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belongo — Expenses (h09)</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23D4AF37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/belongo-shared.css">
+<style>
+/* h09 · EXPENSES — shared .hs-* app shell + .ex-* table.
+   ponytail: table pattern duplicated from h04 (promote to shared if h11 matches). Static data. */
+body { background: var(--color-soft-beige); }
+
+.ex-sum { display: flex; gap: var(--space-6); background: #fff; border: 1px solid rgba(107,114,128,0.16); border-radius: var(--radius-xl); padding: var(--space-5) var(--space-6); box-shadow: var(--shadow-xs); margin-bottom: var(--space-5); flex-wrap: wrap; }
+.ex-stat span { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-warm-gray); margin-bottom: 2px; }
+.ex-stat b { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 800; letter-spacing: -0.02em; }
+.ex-stat.net { margin-left: auto; text-align: right; }
+.ex-stat.net b { color: var(--color-success); }
+
+.ex-table { background: #fff; border: 1px solid rgba(107,114,128,0.16); border-radius: var(--radius-xl); box-shadow: var(--shadow-xs); overflow: hidden; }
+.ex-row { display: grid; grid-template-columns: 0.7fr 0.9fr 1.2fr 1.3fr 0.8fr 0.8fr; gap: var(--space-3); align-items: center; padding: var(--space-4) var(--space-5); border-bottom: 1px solid rgba(107,114,128,0.1); }
+.ex-row:last-child { border-bottom: none; }
+.ex-row.head { background: var(--color-warm-ivory); }
+.ex-row.head .ex-cell { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-warm-gray); }
+.ex-cell { font-size: var(--text-sm); color: var(--color-deep-slate); min-width: 0; }
+.ex-cell.date { font-family: var(--font-mono); font-size: var(--text-xs); }
+.ex-cell.cat { display: flex; align-items: center; gap: 7px; font-weight: 600; }
+.ex-cell.cat .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.ex-cell.amt { font-family: var(--font-display); font-weight: 700; text-align: right; }
+
+@media (max-width: 860px) {
+  .ex-row { grid-template-columns: 1fr; gap: 6px; }
+  .ex-row.head { display: none; }
+  .ex-cell { display: flex; justify-content: space-between; gap: var(--space-3); align-items: baseline; }
+  .ex-cell::before { content: attr(data-label); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-warm-gray); flex-shrink: 0; }
+  .ex-cell.cat { justify-content: flex-start; }
+  .ex-cell.cat::before { content: none; }
+  .ex-cell.amt { text-align: left; }
+  .ex-stat.net { margin-left: 0; text-align: left; }
+}
+</style>
+</head>
+<body>
+
+<aside class="hs-sidebar" id="hs-sidebar">
+  <div class="hs-side-logo">
+    <img src="assets/brand/belongo-logo-ondark.svg" alt="Belongo">
+    <span class="tag badge badge-premium">HOST</span>
+  </div>
+  <div class="hs-switch">
+    <button class="hs-switch-btn" type="button" data-switcher aria-haspopup="true" aria-expanded="false">
+      <span class="hs-switch-ava">RS</span>
+      <span class="hs-switch-meta"><b>Roya Stays</b><span>4 properties · 14 units</span></span>
+      <span class="hs-switch-caret">▾</span>
+    </button>
+    <div class="hs-switch-menu" id="hs-switch-menu">
+      <div class="hs-switch-item is-active">Roya Stays <span class="dot"></span></div>
+      <div class="hs-switch-item">Marina Collective <span class="dot"></span></div>
+      <div class="hs-switch-item">Old Town Rentals <span class="dot"></span></div>
+      <div class="hs-switch-item">Coastline Homes <span class="dot"></span></div>
+      <div class="hs-switch-item hs-switch-add">+ Add a property group</div>
+    </div>
+  </div>
+  <nav class="hs-nav">
+    <a class="hs-nav-link" href="belongo-h02-host-dashboard.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a class="hs-nav-link" href="belongo-h04-bookings.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 9.5l1.3 1.3 2.7-2.8"/></svg>
+      Bookings <span class="nl-badge">3</span>
+    </a>
+    <a class="hs-nav-link" href="belongo-h05-availability-calendar.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"/></svg>
+      Calendar
+    </a>
+    <a class="hs-nav-link" href="belongo-h06-properties.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 14V6.2L8 2l5.5 4.2V14z"/><path d="M6.3 14V9.3h3.4V14"/></svg>
+      Properties
+    </a>
+    <a class="hs-nav-link" href="belongo-h07-pricing.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 9.5L9.5 2 14 2l0 4.5L6.5 14z"/><circle cx="11" cy="5" r="1"/></svg>
+      Pricing
+    </a>
+    <a class="hs-nav-link" href="belongo-h08-reviews.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2l1.8 3.8 4.2.5-3.1 2.9.8 4.1L8 11.8 4.3 13.3l.8-4.1L2 6.3l4.2-.5z"/></svg>
+      Reviews <span class="nl-badge">2</span>
+    </a>
+    <div class="hs-nav-sec">Finance</div>
+    <a class="hs-nav-link is-active" href="belongo-h09-expenses.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 2h8l2 2v10l-2-1-1.5 1L8 13l-1.5 1L5 13l-2 1z"/><path d="M5.5 6h5M5.5 9h3"/></svg>
+      Expenses
+    </a>
+    <a class="hs-nav-link" href="belongo-h10-reports.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 13h12M4 13V8M7.5 13V4M11 13V9.5"/></svg>
+      Revenue &amp; P&amp;L
+    </a>
+    <a class="hs-nav-link" href="belongo-h11-tenants.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="6" cy="5.5" r="2.3"/><path d="M2.3 13.5c0-2.3 1.7-3.7 3.7-3.7s3.7 1.4 3.7 3.7"/><path d="M10.5 4.2a2.2 2.2 0 0 1 0 4.3M11.2 9.9c1.6.3 2.7 1.6 2.7 3.6"/></svg>
+      Tenants &amp; leases
+    </a>
+  </nav>
+  <div class="hs-side-foot">
+    <a class="hs-nav-link" href="https://noushweb.github.io/belongo-client-prototype/belongo-g15-contact.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><path d="M6.2 6.2a1.9 1.9 0 1 1 2.6 2.4c-.5.4-.8.6-.8 1.2"/><circle cx="8" cy="11.6" r="0.5" fill="currentColor" stroke="none"/></svg>
+      Help &amp; support
+    </a>
+    <a class="hs-nav-link" href="https://noushweb.github.io/belongo-client-prototype/belongo-g11-account-settings.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.5v1.8M8 12.7v1.8M14.5 8h-1.8M3.3 8H1.5M12.6 3.4l-1.3 1.3M4.7 11.3l-1.3 1.3M12.6 12.6l-1.3-1.3M4.7 4.7L3.4 3.4"/></svg>
+      Settings
+    </a>
+    <a class="hs-account" href="https://noushweb.github.io/belongo-client-prototype/belongo-g11-account-settings.html">
+      <span class="hs-account-ava">LH</span>
+      <span class="hs-account-meta"><b>Layla Hassan</b><span>Owner · Roya Stays</span></span>
+      <span class="out">⇲</span>
+    </a>
+  </div>
+</aside>
+<div class="hs-overlay" data-close-sidebar></div>
+
+<div class="hs-main">
+  <header class="hs-topbar">
+    <button class="hs-burger" type="button" data-toggle-sidebar aria-label="Open menu"><span></span><span></span><span></span></button>
+    <div class="hs-title">
+      <h1>Expenses</h1>
+      <p>Roya Stays · September 2026</p>
+    </div>
+    <div class="hs-top-actions">
+      <button class="hs-bell" type="button" aria-label="Notifications">🔔<span class="dot"></span></button>
+      <a class="btn btn-premium btn-sm" href="#"><span class="btn-gold-mark">＋</span> <span class="hs-addlabel">Add expense</span></a>
+    </div>
+  </header>
+
+  <main class="hs-content">
+    <div class="ex-sum">
+      <div class="ex-stat"><span>Spend · Sep</span><b>AED 11,175</b></div>
+      <div class="ex-stat"><span>Maintenance</span><b>AED 770</b></div>
+      <div class="ex-stat"><span>Utilities</span><b>AED 1,310</b></div>
+      <div class="ex-stat"><span>Belongo fees</span><b>AED 8,420</b></div>
+      <div class="ex-stat net"><span>Net after expenses</span><b>AED 73,025</b></div>
+    </div>
+
+    <div class="ex-table">
+      <div class="ex-row head">
+        <span class="ex-cell">Date</span>
+        <span class="ex-cell">Category</span>
+        <span class="ex-cell">Property</span>
+        <span class="ex-cell">Note</span>
+        <span class="ex-cell amt">Amount</span>
+        <span class="ex-cell">Status</span>
+      </div>
+
+      <div class="ex-row">
+        <span class="ex-cell date" data-label="Date">14 Sep</span>
+        <span class="ex-cell cat" data-label="Category"><span class="dot" style="background:var(--color-info)"></span>Cleaning</span>
+        <span class="ex-cell" data-label="Property">Downtown Calm Studio</span>
+        <span class="ex-cell" data-label="Note">SparkleCo turnover</span>
+        <span class="ex-cell amt" data-label="Amount">AED 180</span>
+        <span class="ex-cell" data-label="Status"><span class="badge badge-available">Paid</span></span>
+      </div>
+      <div class="ex-row">
+        <span class="ex-cell date" data-label="Date">12 Sep</span>
+        <span class="ex-cell cat" data-label="Category"><span class="dot" style="background:var(--color-warning)"></span>Maintenance</span>
+        <span class="ex-cell" data-label="Property">Marina Skyline 2-Bed</span>
+        <span class="ex-cell" data-label="Note">AC service</span>
+        <span class="ex-cell amt" data-label="Amount">AED 420</span>
+        <span class="ex-cell" data-label="Status"><span class="badge badge-available">Paid</span></span>
+      </div>
+      <div class="ex-row">
+        <span class="ex-cell date" data-label="Date">11 Sep</span>
+        <span class="ex-cell cat" data-label="Category"><span class="dot" style="background:var(--color-soft-gold)"></span>Supplies</span>
+        <span class="ex-cell" data-label="Property">Bur Dubai Souq Loft</span>
+        <span class="ex-cell" data-label="Note">Linens &amp; toiletries</span>
+        <span class="ex-cell amt" data-label="Amount">AED 240</span>
+        <span class="ex-cell" data-label="Status"><span class="badge badge-available">Paid</span></span>
+      </div>
+      <div class="ex-row">
+        <span class="ex-cell date" data-label="Date">10 Sep</span>
+        <span class="ex-cell cat" data-label="Category"><span class="dot" style="background:var(--color-success)"></span>Utilities</span>
+        <span class="ex-cell" data-label="Property">All units</span>
+        <span class="ex-cell" data-label="Note">DEWA — electricity &amp; water</span>
+        <span class="ex-cell amt" data-label="Amount">AED 1,310</span>
+        <span class="ex-cell" data-label="Status"><span class="badge badge-available">Paid</span></span>
+      </div>
+      <div class="ex-row">
+        <span class="ex-cell date" data-label="Date">9 Sep</span>
+        <span class="ex-cell cat" data-label="Category"><span class="dot" style="background:var(--color-midnight-navy)"></span>Platform fees</span>
+        <span class="ex-cell" data-label="Property">Roya Stays</span>
+        <span class="ex-cell" data-label="Note">Belongo commission · August</span>
+        <span class="ex-cell amt" data-label="Amount">AED 8,420</span>
+        <span class="ex-cell" data-label="Status"><span class="badge badge-available">Paid</span></span>
+      </div>
+      <div class="ex-row">
+        <span class="ex-cell date" data-label="Date">8 Sep</span>
+        <span class="ex-cell cat" data-label="Category"><span class="dot" style="background:var(--color-warning)"></span>Maintenance</span>
+        <span class="ex-cell" data-label="Property">JBR Beachfront 2-Bed</span>
+        <span class="ex-cell" data-label="Note">Plumbing call-out</span>
+        <span class="ex-cell amt" data-label="Amount">AED 350</span>
+        <span class="ex-cell" data-label="Status"><span class="badge badge-pending">Pending</span></span>
+      </div>
+      <div class="ex-row">
+        <span class="ex-cell date" data-label="Date">6 Sep</span>
+        <span class="ex-cell cat" data-label="Category"><span class="dot" style="background:var(--color-info)"></span>Cleaning</span>
+        <span class="ex-cell" data-label="Property">DIFC Skyline Studio</span>
+        <span class="ex-cell" data-label="Note">SparkleCo turnover</span>
+        <span class="ex-cell amt" data-label="Amount">AED 160</span>
+        <span class="ex-cell" data-label="Status"><span class="badge badge-available">Paid</span></span>
+      </div>
+      <div class="ex-row">
+        <span class="ex-cell date" data-label="Date">5 Sep</span>
+        <span class="ex-cell cat" data-label="Category"><span class="dot" style="background:var(--color-soft-gold)"></span>Supplies</span>
+        <span class="ex-cell" data-label="Property">Deira Creekside 1-Bed</span>
+        <span class="ex-cell" data-label="Note">Kitchen restock</span>
+        <span class="ex-cell amt" data-label="Amount">AED 95</span>
+        <span class="ex-cell" data-label="Status"><span class="badge badge-pending">Pending</span></span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/belongo-shared.js" defer></script>
+<script>
+(function () {
+  var sb = document.getElementById('hs-sidebar');
+  var ov = document.querySelector('.hs-overlay');
+  function close() { sb.classList.remove('is-open'); ov.classList.remove('is-on'); }
+  document.querySelectorAll('[data-toggle-sidebar]').forEach(function (b) {
+    b.addEventListener('click', function () { sb.classList.toggle('is-open'); ov.classList.toggle('is-on'); });
+  });
+  document.querySelectorAll('[data-close-sidebar]').forEach(function (b) { b.addEventListener('click', close); });
+  var sw = document.querySelector('[data-switcher]');
+  var menu = document.getElementById('hs-switch-menu');
+  if (sw && menu) {
+    sw.addEventListener('click', function (e) { e.stopPropagation(); var on = menu.classList.toggle('is-on'); sw.setAttribute('aria-expanded', on ? 'true' : 'false'); });
+    document.addEventListener('click', function () { menu.classList.remove('is-on'); sw.setAttribute('aria-expanded', 'false'); });
+  }
+})();
+</script>
+</body>
+</html>

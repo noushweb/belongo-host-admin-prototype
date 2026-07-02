@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belongo for Hosts — List your property (h01)</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23D4AF37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/belongo-shared.css">
+<style>
+/* ============================================================
+   h01 · HOST LANDING  (.hl-*)
+   M1 (Join): host acquisition. Public FX-02 shell, host nav.
+   Command-Search confidence. Commission transparency front &
+   centre (M1's stall point). CTA → onboarding wizard (h03).
+   Container 1180. No design-states (marketing page).
+   ============================================================ */
+.hl-shell { max-width: 1180px; margin: 0 auto; padding: 0 var(--space-6); }
+
+/* hero */
+.hl-hero { background: var(--color-midnight-navy); color: var(--color-warm-ivory); position: relative; overflow: hidden; }
+.hl-hero::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 50% 60% at 92% 0%, rgba(212,175,55,0.16), transparent 55%), radial-gradient(ellipse 40% 60% at 0% 100%, rgba(30,58,95,0.55), transparent 60%); pointer-events: none; }
+.hl-hero-inner { position: relative; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: var(--space-12); align-items: center; padding-top: var(--space-16); padding-bottom: var(--space-16); }
+.hl-eyebrow { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-soft-gold); margin-bottom: var(--space-4); }
+.hl-hero h1 { font-family: var(--font-display); font-size: clamp(2.1rem, 4.5vw, 3.4rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.06; }
+.hl-hero h1 span { color: var(--color-soft-gold); }
+.hl-hero-sub { margin-top: var(--space-5); font-size: var(--text-md); line-height: 1.65; color: rgba(247,246,242,0.82); max-width: 480px; }
+.hl-hero-cta { display: flex; align-items: center; gap: var(--space-4); margin-top: var(--space-8); flex-wrap: wrap; }
+.hl-hero-cta .free { font-family: var(--font-mono); font-size: var(--text-xs); color: rgba(247,246,242,0.7); }
+.hl-hero-cta .free b { color: var(--color-soft-gold); font-weight: 500; }
+
+/* earnings estimator card (hero focal point) */
+.hl-est { background: #fff; color: var(--color-midnight-navy); border-radius: var(--radius-2xl); box-shadow: var(--shadow-xl); padding: var(--space-6); }
+.hl-est-head { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-warm-gray); margin-bottom: var(--space-4); }
+.hl-est-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px solid rgba(107,114,128,0.12); }
+.hl-est-row .lbl { font-size: var(--text-sm); color: var(--color-deep-slate); }
+.hl-est-pick { display: inline-flex; align-items: center; gap: var(--space-2); border: 1px solid rgba(107,114,128,0.3); border-radius: var(--radius-full); padding: 5px var(--space-4); font-size: var(--text-sm); font-weight: 600; cursor: pointer; }
+.hl-est-slider { position: relative; height: 4px; background: rgba(107,114,128,0.2); border-radius: var(--radius-full); margin: var(--space-3) 0; }
+.hl-est-slider .fill { position: absolute; left: 0; right: 42%; top: 0; bottom: 0; background: var(--color-soft-gold); border-radius: var(--radius-full); }
+.hl-est-slider .knob { position: absolute; left: 58%; top: 50%; transform: translate(-50%,-50%); width: 16px; height: 16px; background: #fff; border: 2px solid var(--color-soft-gold); border-radius: var(--radius-full); box-shadow: var(--shadow-sm); }
+.hl-est-out { background: var(--color-soft-gold-pale); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-5); margin-top: var(--space-4); text-align: center; }
+.hl-est-out .amt { font-family: var(--font-display); font-weight: 800; font-size: var(--text-3xl); letter-spacing: -0.03em; }
+.hl-est-out .per { font-size: var(--text-xs); color: var(--color-warm-gray); }
+.hl-est-note { font-size: 10px; color: var(--color-warm-gray); text-align: center; margin-top: var(--space-3); }
+
+/* commission transparency strip (M1) */
+.hl-terms { background: var(--color-deep-slate); color: var(--color-warm-ivory); }
+.hl-terms-row { display: grid; grid-template-columns: repeat(4, 1fr); }
+.hl-term { padding: var(--space-6) var(--space-5); border-right: 1px solid rgba(247,246,242,0.1); display: flex; gap: var(--space-3); align-items: flex-start; }
+.hl-term:last-child { border-right: none; }
+.hl-term .ic { color: var(--color-soft-gold); font-size: var(--text-md); flex-shrink: 0; }
+.hl-term b { font-family: var(--font-display); font-weight: 700; font-size: var(--text-md); display: block; }
+.hl-term span { font-size: var(--text-xs); color: rgba(247,246,242,0.65); }
+
+/* sections */
+.hl-section { padding: var(--space-20) 0 var(--space-12); }
+.hl-label { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-warm-gray); margin-bottom: var(--space-3); }
+.hl-title { font-family: var(--font-display); font-size: clamp(1.7rem, 3.2vw, var(--text-2xl)); font-weight: 700; letter-spacing: -0.025em; line-height: 1.18; max-width: 620px; }
+.hl-title em { font-style: italic; font-weight: 500; color: var(--color-soft-gold); }
+.hl-intro { color: var(--color-warm-gray); max-width: 560px; margin-top: var(--space-3); }
+
+/* how it works */
+.hl-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); margin-top: var(--space-10); }
+.hl-step { position: relative; }
+.hl-step-n { width: 36px; height: 36px; border-radius: var(--radius-full); background: var(--color-midnight-navy); color: var(--color-soft-gold); font-family: var(--font-mono); font-size: var(--text-sm); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4); }
+.hl-step b { font-family: var(--font-display); font-weight: 700; font-size: var(--text-md); display: block; margin-bottom: var(--space-2); }
+.hl-step p { font-size: var(--text-sm); color: var(--color-warm-gray); line-height: 1.55; }
+
+/* dashboard preview split */
+.hl-dash { background: var(--color-soft-beige); }
+.hl-dash-split { display: grid; grid-template-columns: 1fr 1.15fr; gap: var(--space-12); align-items: center; }
+.hl-feat { display: flex; gap: var(--space-4); padding: var(--space-4) 0; border-bottom: 1px solid rgba(107,114,128,0.15); }
+.hl-feat:last-child { border-bottom: none; }
+.hl-feat-ic { width: 38px; height: 38px; border-radius: var(--radius-lg); background: var(--color-soft-gold-pale); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: var(--text-md); }
+.hl-feat b { font-family: var(--font-display); font-weight: 700; font-size: var(--text-md); display: block; margin-bottom: 2px; }
+.hl-feat p { font-size: var(--text-sm); color: var(--color-warm-gray); line-height: 1.55; }
+/* mini dashboard mock */
+.hl-mock { background: #fff; border: 1px solid rgba(107,114,128,0.15); border-radius: var(--radius-2xl); box-shadow: var(--shadow-lg); overflow: hidden; }
+.hl-mock-top { background: var(--color-midnight-navy); color: var(--color-warm-ivory); padding: var(--space-4) var(--space-5); display: flex; align-items: center; justify-content: space-between; }
+.hl-mock-top b { font-family: var(--font-display); font-weight: 700; font-size: var(--text-sm); }
+.hl-mock-top .dots { display: flex; gap: 5px; }
+.hl-mock-top .dots i { width: 8px; height: 8px; border-radius: var(--radius-full); background: rgba(247,246,242,0.3); }
+.hl-mock-body { padding: var(--space-5); }
+.hl-mock-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); margin-bottom: var(--space-4); }
+.hl-mock-stat { background: var(--color-warm-ivory); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); }
+.hl-mock-stat .k { font-size: 10px; color: var(--color-warm-gray); text-transform: uppercase; letter-spacing: 0.06em; }
+.hl-mock-stat .v { font-family: var(--font-display); font-weight: 800; font-size: var(--text-lg); margin-top: 2px; }
+.hl-mock-stat .v small { font-family: var(--font-body); font-size: 10px; color: var(--color-success); font-weight: 600; }
+.hl-mock-chart { height: 120px; display: flex; align-items: flex-end; gap: var(--space-2); padding: var(--space-3); background: var(--color-warm-ivory); border-radius: var(--radius-lg); }
+.hl-mock-chart i { flex: 1; background: rgba(212,175,55,0.4); border-radius: 3px 3px 0 0; }
+.hl-mock-chart i.hi { background: var(--color-soft-gold); }
+
+/* stats band */
+.hl-statsband { background: var(--color-midnight-navy); color: var(--color-warm-ivory); }
+.hl-statsband-row { display: grid; grid-template-columns: repeat(4, 1fr); }
+.hl-sb { padding: var(--space-10) var(--space-5); border-right: 1px solid rgba(247,246,242,0.1); text-align: center; }
+.hl-sb:last-child { border-right: none; }
+.hl-sb b { font-family: var(--font-mono); font-weight: 500; font-size: var(--text-2xl); color: var(--color-soft-gold); display: block; }
+.hl-sb span { font-size: var(--text-xs); color: rgba(247,246,242,0.6); letter-spacing: 0.04em; }
+
+/* testimonials */
+.hl-quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin-top: var(--space-10); }
+.hl-quote { background: #fff; border: 1px solid rgba(107,114,128,0.12); border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-xs); }
+.hl-quote p { font-size: var(--text-sm); line-height: 1.65; color: var(--color-deep-slate); }
+.hl-quote-meta { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-5); }
+.hl-quote-meta .avatar { width: 38px; height: 38px; font-size: var(--text-xs); }
+.hl-quote-meta b { font-size: var(--text-sm); font-weight: 600; display: block; }
+.hl-quote-meta span { font-size: var(--text-xs); color: var(--color-warm-gray); }
+
+/* host FAQ */
+.hl-faq { background: var(--color-soft-beige); }
+.hl-faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-top: var(--space-8); }
+.hl-faq-item { background: #fff; border: 1px solid rgba(107,114,128,0.12); border-radius: var(--radius-lg); padding: var(--space-5); }
+.hl-faq-item b { font-family: var(--font-display); font-weight: 700; font-size: var(--text-sm); display: block; margin-bottom: var(--space-2); }
+.hl-faq-item p { font-size: var(--text-sm); color: var(--color-warm-gray); line-height: 1.6; }
+
+/* final CTA */
+.hl-cta { background: var(--color-midnight-navy); color: var(--color-warm-ivory); border-radius: var(--radius-2xl); padding: var(--space-16) var(--space-12); text-align: center; position: relative; overflow: hidden; margin-bottom: var(--space-20); }
+.hl-cta::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 50% 80% at 50% 0%, rgba(212,175,55,0.16), transparent 60%); }
+.hl-cta-inner { position: relative; }
+.hl-cta h2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.8rem, 3.5vw, var(--text-3xl)); letter-spacing: -0.03em; }
+.hl-cta h2 span { color: var(--color-soft-gold); }
+.hl-cta p { font-size: var(--text-md); color: rgba(247,246,242,0.78); margin-top: var(--space-3); max-width: 480px; margin-inline: auto; }
+.hl-cta .btn { margin-top: var(--space-6); }
+.hl-cta-terms { font-family: var(--font-mono); font-size: var(--text-xs); color: rgba(247,246,242,0.6); margin-top: var(--space-4); }
+
+@media (max-width: 980px) {
+  .hl-hero-inner, .hl-dash-split { grid-template-columns: 1fr; gap: var(--space-8); }
+  .hl-terms-row { grid-template-columns: 1fr 1fr; }
+  .hl-term:nth-child(2) { border-right: none; }
+  .hl-steps { grid-template-columns: 1fr 1fr; }
+  .hl-quotes { grid-template-columns: 1fr; }
+  .hl-statsband-row { grid-template-columns: 1fr 1fr; }
+  .hl-sb { border-right: none; }
+}
+@media (max-width: 700px) {
+  .hl-terms-row, .hl-steps, .hl-faq-grid, .hl-statsband-row { grid-template-columns: 1fr; }
+  .hl-mock-stats { grid-template-columns: 1fr 1fr; }
+  .hl-section { padding: var(--space-16) 0 var(--space-8); }
+  .hl-cta { padding: var(--space-10) var(--space-6); }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER (FX-02 · host nav) ============ -->
+<header class="site-header">
+  <div class="site-container site-header-inner">
+    <a class="site-logo" href="https://noushweb.github.io/belongo-client-prototype/belongo-g02-landing-command.html"><img src="assets/brand/belongo-logo-onlight.svg" alt="Belongo"></a>
+    <nav class="site-nav">
+      <a class="site-nav-link" href="#how">How it works</a>
+      <a class="site-nav-link" href="#dashboard">The dashboard</a>
+      <a class="site-nav-link" href="#pricing">Pricing</a>
+      <a class="site-nav-link" href="#faq">Host FAQ</a>
+    </nav>
+    <div class="site-actions">
+      <a class="site-host-link" href="https://noushweb.github.io/belongo-client-prototype/belongo-g02-landing-command.html">For guests</a>
+      <span class="site-actions-divider"></span>
+      <a class="site-nav-link" href="belongo-h02-host-dashboard.html" style="font-weight:600">Host sign in</a>
+      <a class="btn btn-premium btn-sm" href="belongo-h03-onboarding-wizard.html">List your property</a>
+      <button class="site-burger" type="button" data-toggle="mobile-menu" aria-expanded="false" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="site-mobile-menu" id="site-mobile-menu">
+    <a class="site-nav-link" href="#how">How it works</a>
+    <a class="site-nav-link" href="#dashboard">The dashboard</a>
+    <a class="site-nav-link" href="#pricing">Pricing</a>
+    <a class="site-nav-link" href="#faq">Host FAQ</a>
+    <div class="site-mobile-actions">
+      <a class="btn btn-premium btn-md" href="belongo-h03-onboarding-wizard.html">List your property</a>
+      <a class="btn btn-secondary btn-md" href="belongo-h02-host-dashboard.html">Host sign in</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hl-hero">
+  <div class="hl-shell hl-hero-inner">
+    <div>
+      <div class="hl-eyebrow">Belongo for Hosts</div>
+      <h1>Your property, <span>working across six countries.</span></h1>
+      <p class="hl-hero-sub">One dashboard for every unit in every market. AI pricing that asks before it acts, weekly payouts, and terms you can read in a single breath.</p>
+      <div class="hl-hero-cta">
+        <a class="btn btn-premium btn-lg" href="belongo-h03-onboarding-wizard.html">List your property</a>
+        <span class="free">✓ Free to list · <b>no fee until you’re booked</b></span>
+      </div>
+    </div>
+    <div class="hl-est">
+      <div class="hl-est-head">Estimate your earnings</div>
+      <div class="hl-est-row"><span class="lbl">Where</span><span class="hl-est-pick">Dubai Marina ▾</span></div>
+      <div class="hl-est-row" style="border-bottom:none;"><span class="lbl">Property</span><span class="hl-est-pick">2-bed apartment ▾</span></div>
+      <div class="hl-est-slider"><span class="fill"></span><span class="knob"></span></div>
+      <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--color-warm-gray); font-family:var(--font-mono);"><span>Occupancy</span><span>~72%</span></div>
+      <div class="hl-est-out">
+        <div class="amt">AED 18,400</div>
+        <div class="per">estimated monthly earnings · after our fee</div>
+      </div>
+      <div class="hl-est-note">Estimate from comparable Belongo stays. Not a guarantee — your numbers depend on your place &amp; calendar.</div>
+    </div>
+  </div>
+</section>
+
+<!-- commission transparency (M1) -->
+<section class="hl-terms">
+  <div class="hl-shell hl-terms-row">
+    <div class="hl-term"><span class="ic">%</span><div><b>From 12%</b><span>commission — all-in, no add-ons</span></div></div>
+    <div class="hl-term"><span class="ic">⚡</span><div><b>Weekly payouts</b><span>to your local bank, every Monday</span></div></div>
+    <div class="hl-term"><span class="ic">✓</span><div><b>No listing fees</b><span>you only pay when you earn</span></div></div>
+    <div class="hl-term"><span class="ic">↩</span><div><b>Cancel anytime</b><span>no lock-in, no exit penalty</span></div></div>
+  </div>
+</section>
+
+<!-- how it works -->
+<section class="hl-section" id="how">
+  <div class="hl-shell">
+    <div class="hl-label">How it works</div>
+    <h2 class="hl-title">Live in a day, not a fortnight</h2>
+    <div class="hl-steps">
+      <div class="hl-step"><div class="hl-step-n">1</div><b>List it</b><p>Our wizard walks you through photos, amenities and rules — save and resume anytime, finish in about 20 minutes.</p></div>
+      <div class="hl-step"><div class="hl-step-n">2</div><b>We price it</b><p>AI suggests a nightly rate from real local demand. You set the guardrails; it never moves without your rules.</p></div>
+      <div class="hl-step"><div class="hl-step-n">3</div><b>Get booked</b><p>Reach guests across six countries — with religious-intelligence filters that surface you to the right ones.</p></div>
+      <div class="hl-step"><div class="hl-step-n">4</div><b>Get paid</b><p>Weekly payouts, P&amp;L per property, expenses tracked — all in one multi-country dashboard.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- dashboard preview -->
+<section class="hl-section hl-dash" id="dashboard">
+  <div class="hl-shell hl-dash-split">
+    <div>
+      <div class="hl-label">One dashboard</div>
+      <h2 class="hl-title">Every unit, every country — <em>one screen</em></h2>
+      <div style="margin-top: var(--space-6);">
+        <div class="hl-feat"><span class="hl-feat-ic">✦</span><div><b>AI pricing with guardrails</b><p>Suggestions, not seizures of control — set floors and ceilings, approve or auto-apply. Built to assist, never override.</p></div></div>
+        <div class="hl-feat"><span class="hl-feat-ic">🌍</span><div><b>Multi-country, multi-currency</b><p>Properties in Dubai, Amman, Riyadh roll up into one consolidated P&amp;L — no spreadsheets.</p></div></div>
+        <div class="hl-feat"><span class="hl-feat-ic">📊</span><div><b>Expenses &amp; revenue, tracked</b><p>Log maintenance and utilities, see profit per property, export for your accountant in a click.</p></div></div>
+      </div>
+    </div>
+    <div class="hl-mock" aria-hidden="true">
+      <div class="hl-mock-top"><b>Portfolio overview</b><span class="dots"><i></i><i></i><i></i></span></div>
+      <div class="hl-mock-body">
+        <div class="hl-mock-stats">
+          <div class="hl-mock-stat"><div class="k">Revenue · MTD</div><div class="v">AED 64k <small>↑ 12%</small></div></div>
+          <div class="hl-mock-stat"><div class="k">Occupancy</div><div class="v">78% <small>↑ 4%</small></div></div>
+          <div class="hl-mock-stat"><div class="k">Units</div><div class="v">9</div></div>
+        </div>
+        <div class="hl-mock-chart">
+          <i style="height:40%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:70%"></i><i class="hi" style="height:88%"></i><i style="height:62%"></i><i style="height:75%"></i><i class="hi" style="height:95%"></i><i style="height:68%"></i><i style="height:80%"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- stats band -->
+<section class="hl-statsband">
+  <div class="hl-shell hl-statsband-row">
+    <div class="hl-sb"><b>6</b><span>countries live</span></div>
+    <div class="hl-sb"><b>+18%</b><span>avg revenue vs. self-managed</span></div>
+    <div class="hl-sb"><b>Weekly</b><span>payouts, every Monday</span></div>
+    <div class="hl-sb"><b>&lt; 1 h</b><span>host support response</span></div>
+  </div>
+</section>
+
+<!-- testimonials -->
+<section class="hl-section">
+  <div class="hl-shell">
+    <div class="hl-label">From our hosts</div>
+    <h2 class="hl-title">Owners who stopped juggling spreadsheets</h2>
+    <div class="hl-quotes">
+      <div class="hl-quote">
+        <p>“I run six units across Dubai and Amman. Before Belongo that was six calendars and a panic every payday. Now it’s one screen and the money lands every Monday.”</p>
+        <div class="hl-quote-meta"><span class="avatar">FK</span><div><b>Faisal K.</b><span>6 properties · Dubai &amp; Amman</span></div></div>
+      </div>
+      <div class="hl-quote">
+        <p>“The AI pricing nudged my weekend rate up 15% and I’d never have dared. It asked first — I approved — done. Occupancy didn’t even dip.”</p>
+        <div class="hl-quote-meta"><span class="avatar">RM</span><div><b>Rana M.</b><span>2 properties · Riyadh</span></div></div>
+      </div>
+      <div class="hl-quote">
+        <p>“Guests find my place because it’s near a mosque and the filters actually surface that. The right guests, fewer cancellations.”</p>
+        <div class="hl-quote-meta"><span class="avatar">AH</span><div><b>Ahmad H.</b><span>1 property · Al Seef, Dubai</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- pricing + FAQ -->
+<section class="hl-section hl-faq" id="faq">
+  <div class="hl-shell">
+    <div class="hl-label" id="pricing">Pricing &amp; the fine print</div>
+    <h2 class="hl-title">No surprises for you, either</h2>
+    <p class="hl-intro">The same honesty we give guests, we give hosts. Here’s exactly what it costs and how it works.</p>
+    <div class="hl-faq-grid">
+      <div class="hl-faq-item"><b>What does it cost?</b><p>A flat commission from 12% of each booking — all-in. No listing fee, no monthly fee, no charge for the dashboard or AI pricing.</p></div>
+      <div class="hl-faq-item"><b>When do I get paid?</b><p>Weekly, every Monday, to your local bank in your currency. Guest part-payments are passed through on the same schedule.</p></div>
+      <div class="hl-faq-item"><b>Who handles cancellations &amp; refunds?</b><p>We do — guests see a transparent refund timeline, and your payout is reconciled automatically. You’re never chasing money.</p></div>
+      <div class="hl-faq-item"><b>Can I keep my other listings elsewhere?</b><p>Yes. No exclusivity, no lock-in. Sync your calendar to avoid double-bookings and cancel whenever you like.</p></div>
+      <div class="hl-faq-item"><b>Do I control my pricing?</b><p>Always. AI suggests; you set floors, ceilings and whether to auto-apply. It assists — it never takes the wheel.</p></div>
+      <div class="hl-faq-item"><b>What about long-stay tenants &amp; leases?</b><p>Belongo handles both nightly stays and longer leases — track tenants, contracts and renewals in the same dashboard.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- final CTA -->
+<section class="hl-section" style="padding-top: 0;">
+  <div class="hl-shell">
+    <div class="hl-cta">
+      <div class="hl-cta-inner">
+        <h2>Your first listing is <span>20 minutes away.</span></h2>
+        <p>Start the wizard now — save and pick up later if life interrupts. We’ll have AI pricing ready the moment you publish.</p>
+        <a class="btn btn-premium btn-lg" href="belongo-h03-onboarding-wizard.html">List your property — free</a>
+        <div class="hl-cta-terms">Commission from 12% · weekly payouts · no listing fees · cancel anytime</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER (FX-02, verbatim) ============ -->
+<footer class="site-footer">
+  <div class="site-container">
+    <div class="site-footer-top">
+      <div class="site-footer-brand">
+        <img src="assets/brand/belongo-logo-ondark.svg" alt="Belongo">
+        <p class="site-footer-tagline">Stays that keep their promise — search, compare and book
+        hospitality across the Gulf and beyond.</p>
+        <div class="trust-row">
+          <span class="trust-pill"><span class="tp-dot"></span>Secure payments · Stripe</span>
+          <span class="trust-pill"><span class="tp-dot"></span>Total price, always</span>
+          <span class="trust-pill"><span class="tp-dot"></span>24/7 human support</span>
+        </div>
+      </div>
+      <div>
+        <div class="site-footer-head">Explore</div>
+        <ul class="site-footer-links">
+          <li><a href="https://noushweb.github.io/belongo-client-prototype/belongo-g02-landing-command.html">Stays in Dubai</a></li>
+          <li><a href="#">Stays in Amman</a></li>
+          <li><a href="#">Collections</a></li>
+          <li><a href="#">Seasonal offers</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="site-footer-head">Company</div>
+        <ul class="site-footer-links">
+          <li><a href="https://noushweb.github.io/belongo-client-prototype/belongo-g14-about.html">About Belongo</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="https://noushweb.github.io/belongo-client-prototype/belongo-g15-contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="site-footer-head">Support</div>
+        <ul class="site-footer-links">
+          <li><a href="#">Help center</a></li>
+          <li><a href="https://noushweb.github.io/belongo-client-prototype/belongo-g10-cancellation.html">Cancellation &amp; refunds</a></li>
+          <li><a href="#">Report an issue</a></li>
+          <li><a href="#">Travel advisories</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="site-footer-head">Hosting</div>
+        <ul class="site-footer-links">
+          <li><a href="belongo-h01-host-landing.html">List your property</a></li>
+          <li><a href="belongo-h02-host-dashboard.html">Host dashboard</a></li>
+          <li><a href="belongo-h07-pricing.html">Pricing AI</a></li>
+          <li><a href="#">Host resources</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="site-footer-bottom">
+      <span>© 2026 Belongo Hospitality · <a href="https://noushweb.github.io/belongo-client-prototype/belongo-g16-privacy.html" style="text-decoration:underline">Privacy</a> · <a href="https://noushweb.github.io/belongo-client-prototype/belongo-g17-terms.html" style="text-decoration:underline">Terms</a> · <a href="https://noushweb.github.io/belongo-client-prototype/belongo-g18-payment-policy.html" style="text-decoration:underline">Payment &amp; Refund Policy</a></span>
+      <span class="pay-row">
+        <span class="pay-chip">VISA</span><span class="pay-chip">MASTERCARD</span><span class="pay-chip">AMEX</span><span class="pay-chip">MADA</span><span class="pay-chip">APPLE PAY</span>
+      </span>
+      <span>Prices in AED · English</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ CHATBOT (FX-04, verbatim) ============ -->
+<button class="chatbot-fab" type="button" data-toggle="chatbot" aria-expanded="false" aria-label="Chat with Belongo Assistant">
+  <svg viewBox="0 0 24 24" fill="none"><path d="M12 3C7 3 3 6.6 3 11c0 2.2 1 4.2 2.7 5.6-.1 1-.5 2.1-1.4 3 1.6-.1 3-.6 4-1.3 1.1.4 2.4.7 3.7.7 5 0 9-3.6 9-8s-4-8-9-8Z" fill="#D4AF37"/><circle cx="8.5" cy="11" r="1.1" fill="#0D1B2A"/><circle cx="12" cy="11" r="1.1" fill="#0D1B2A"/><circle cx="15.5" cy="11" r="1.1" fill="#0D1B2A"/></svg>
+  <span class="chatbot-online"></span>
+</button>
+<div class="chatbot-panel" id="chatbot-panel">
+  <div class="chatbot-head">
+    <div class="chatbot-avatar"><img src="assets/brand/belongo-tile-ondark.svg" alt=""></div>
+    <div class="chatbot-id">
+      <div class="chatbot-name">Belongo Assistant <span class="badge badge-premium">AI</span></div>
+      <div class="chatbot-status"><span class="st-dot"></span>Online · replies instantly</div>
+    </div>
+    <button class="chatbot-min" type="button" data-toggle="chatbot" aria-label="Minimize">—</button>
+  </div>
+  <div class="chatbot-body">
+    <div class="chat-msg from-bot">Thinking about listing? Tell me where your property is and I’ll estimate what it could earn on Belongo — and what our fee would be.</div>
+    <div class="chat-quick">
+      <button class="chat-chip" type="button">Estimate my earnings</button>
+      <button class="chat-chip" type="button">How does the AI pricing work?</button>
+      <button class="chat-chip" type="button">Talk to a human</button>
+    </div>
+  </div>
+  <div class="chatbot-foot">
+    <input class="chat-input" type="text" placeholder="Ask anything…">
+    <button class="chat-send" type="button" aria-label="Send"><svg viewBox="0 0 24 24" fill="none"><path d="M3 11.5 21 3l-8.5 18-2.4-7.1L3 11.5Z" fill="#0D1B2A"/></svg></button>
+  </div>
+  <div class="chatbot-disclaimer">AI assistant — answers may be imperfect. Bookings are always confirmed by email.</div>
+</div>
+
+<script src="assets/belongo-shared.js" defer></script>
+</body>
+</html>

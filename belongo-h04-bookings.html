@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belongo — Bookings (h04)</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23D4AF37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/belongo-shared.css">
+<style>
+/* h04 · BOOKINGS — shared .hs-* app shell + .bk-* table.
+   Establishes the host table pattern (clone for h06/h08/h09/h11/admin).
+   ponytail: tabs/search are static (design prototype, no filter JS). */
+body { background: var(--color-soft-beige); }
+
+.bk-toolbar { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-5); flex-wrap: wrap; }
+.bk-tabs { display: flex; gap: var(--space-1); background: #fff; border: 1px solid rgba(107,114,128,0.16); border-radius: var(--radius-full); padding: 4px; flex-wrap: wrap; }
+.bk-tab { font-size: var(--text-sm); font-weight: 500; color: var(--color-warm-gray); border: none; background: transparent; border-radius: var(--radius-full); padding: 6px var(--space-4); white-space: nowrap; }
+.bk-tab .n { font-family: var(--font-mono); font-size: 10px; opacity: 0.7; margin-left: 4px; }
+.bk-tab:hover { color: var(--color-midnight-navy); }
+.bk-tab.is-active { background: var(--color-midnight-navy); color: var(--color-warm-ivory); }
+.bk-search { margin-left: auto; min-width: 220px; }
+
+.bk-table { background: #fff; border: 1px solid rgba(107,114,128,0.16); border-radius: var(--radius-xl); box-shadow: var(--shadow-xs); overflow: hidden; }
+.bk-row { display: grid; grid-template-columns: 1.5fr 1.4fr 1fr 0.8fr 1fr 0.8fr; gap: var(--space-3); align-items: center; padding: var(--space-4) var(--space-5); border-bottom: 1px solid rgba(107,114,128,0.1); }
+.bk-row:last-child { border-bottom: none; }
+.bk-row.head { background: var(--color-warm-ivory); }
+.bk-row.head .bk-cell { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-warm-gray); }
+.bk-row.r[data-href] { cursor: pointer; transition: background var(--transition-micro); }
+.bk-row.r[data-href]:hover { background: var(--color-warm-ivory); }
+.bk-cell { font-size: var(--text-sm); color: var(--color-deep-slate); min-width: 0; }
+.bk-cell.name b { display: block; font-weight: 600; }
+.bk-cell.name span { font-family: var(--font-mono); font-size: 10px; color: var(--color-warm-gray); }
+.bk-cell.amt { font-family: var(--font-display); font-weight: 700; text-align: right; }
+
+@media (max-width: 860px) {
+  .bk-row { grid-template-columns: 1fr; gap: 6px; padding: var(--space-4) var(--space-5); }
+  .bk-row.head { display: none; }
+  .bk-cell { display: flex; justify-content: space-between; gap: var(--space-3); align-items: baseline; }
+  .bk-cell::before { content: attr(data-label); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-warm-gray); flex-shrink: 0; }
+  .bk-cell.name { display: block; }
+  .bk-cell.name::before { display: none; }
+  .bk-cell.amt { text-align: left; }
+  .bk-search { margin-left: 0; flex: 1 1 100%; min-width: 0; }
+}
+</style>
+</head>
+<body>
+
+<aside class="hs-sidebar" id="hs-sidebar">
+  <div class="hs-side-logo">
+    <img src="assets/brand/belongo-logo-ondark.svg" alt="Belongo">
+    <span class="tag badge badge-premium">HOST</span>
+  </div>
+  <div class="hs-switch">
+    <button class="hs-switch-btn" type="button" data-switcher aria-haspopup="true" aria-expanded="false">
+      <span class="hs-switch-ava">RS</span>
+      <span class="hs-switch-meta"><b>Roya Stays</b><span>4 properties · 14 units</span></span>
+      <span class="hs-switch-caret">▾</span>
+    </button>
+    <div class="hs-switch-menu" id="hs-switch-menu">
+      <div class="hs-switch-item is-active">Roya Stays <span class="dot"></span></div>
+      <div class="hs-switch-item">Marina Collective <span class="dot"></span></div>
+      <div class="hs-switch-item">Old Town Rentals <span class="dot"></span></div>
+      <div class="hs-switch-item">Coastline Homes <span class="dot"></span></div>
+      <div class="hs-switch-item hs-switch-add">+ Add a property group</div>
+    </div>
+  </div>
+  <nav class="hs-nav">
+    <a class="hs-nav-link" href="belongo-h02-host-dashboard.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a class="hs-nav-link is-active" href="belongo-h04-bookings.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 9.5l1.3 1.3 2.7-2.8"/></svg>
+      Bookings <span class="nl-badge">3</span>
+    </a>
+    <a class="hs-nav-link" href="belongo-h05-availability-calendar.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"/></svg>
+      Calendar
+    </a>
+    <a class="hs-nav-link" href="belongo-h06-properties.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 14V6.2L8 2l5.5 4.2V14z"/><path d="M6.3 14V9.3h3.4V14"/></svg>
+      Properties
+    </a>
+    <a class="hs-nav-link" href="belongo-h07-pricing.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 9.5L9.5 2 14 2l0 4.5L6.5 14z"/><circle cx="11" cy="5" r="1"/></svg>
+      Pricing
+    </a>
+    <a class="hs-nav-link" href="belongo-h08-reviews.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2l1.8 3.8 4.2.5-3.1 2.9.8 4.1L8 11.8 4.3 13.3l.8-4.1L2 6.3l4.2-.5z"/></svg>
+      Reviews <span class="nl-badge">2</span>
+    </a>
+    <div class="hs-nav-sec">Finance</div>
+    <a class="hs-nav-link" href="belongo-h09-expenses.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 2h8l2 2v10l-2-1-1.5 1L8 13l-1.5 1L5 13l-2 1z"/><path d="M5.5 6h5M5.5 9h3"/></svg>
+      Expenses
+    </a>
+    <a class="hs-nav-link" href="belongo-h10-reports.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 13h12M4 13V8M7.5 13V4M11 13V9.5"/></svg>
+      Revenue &amp; P&amp;L
+    </a>
+    <a class="hs-nav-link" href="belongo-h11-tenants.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="6" cy="5.5" r="2.3"/><path d="M2.3 13.5c0-2.3 1.7-3.7 3.7-3.7s3.7 1.4 3.7 3.7"/><path d="M10.5 4.2a2.2 2.2 0 0 1 0 4.3M11.2 9.9c1.6.3 2.7 1.6 2.7 3.6"/></svg>
+      Tenants &amp; leases
+    </a>
+  </nav>
+  <div class="hs-side-foot">
+    <a class="hs-nav-link" href="https://noushweb.github.io/belongo-client-prototype/belongo-g15-contact.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><path d="M6.2 6.2a1.9 1.9 0 1 1 2.6 2.4c-.5.4-.8.6-.8 1.2"/><circle cx="8" cy="11.6" r="0.5" fill="currentColor" stroke="none"/></svg>
+      Help &amp; support
+    </a>
+    <a class="hs-nav-link" href="https://noushweb.github.io/belongo-client-prototype/belongo-g11-account-settings.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.5v1.8M8 12.7v1.8M14.5 8h-1.8M3.3 8H1.5M12.6 3.4l-1.3 1.3M4.7 11.3l-1.3 1.3M12.6 12.6l-1.3-1.3M4.7 4.7L3.4 3.4"/></svg>
+      Settings
+    </a>
+    <a class="hs-account" href="https://noushweb.github.io/belongo-client-prototype/belongo-g11-account-settings.html">
+      <span class="hs-account-ava">LH</span>
+      <span class="hs-account-meta"><b>Layla Hassan</b><span>Owner · Roya Stays</span></span>
+      <span class="out">⇲</span>
+    </a>
+  </div>
+</aside>
+<div class="hs-overlay" data-close-sidebar></div>
+
+<div class="hs-main">
+  <header class="hs-topbar">
+    <button class="hs-burger" type="button" data-toggle-sidebar aria-label="Open menu"><span></span><span></span><span></span></button>
+    <div class="hs-title">
+      <h1>Bookings</h1>
+      <p>Roya Stays · 14 units across 4 properties</p>
+    </div>
+    <div class="hs-top-actions">
+      <button class="hs-bell" type="button" aria-label="Notifications">🔔<span class="dot"></span></button>
+      <a class="btn btn-secondary btn-sm" href="#"><span class="hs-addlabel">Export</span> ↧</a>
+    </div>
+  </header>
+
+  <main class="hs-content">
+    <!-- toolbar: static tabs + search (ponytail: no filter logic) -->
+    <div class="bk-toolbar">
+      <div class="bk-tabs">
+        <button class="bk-tab is-active" type="button">All <span class="n">42</span></button>
+        <button class="bk-tab" type="button">Upcoming <span class="n">11</span></button>
+        <button class="bk-tab" type="button">In-house <span class="n">5</span></button>
+        <button class="bk-tab" type="button">Completed <span class="n">24</span></button>
+        <button class="bk-tab" type="button">Cancelled <span class="n">2</span></button>
+      </div>
+      <div class="search-input-wrap bk-search">
+        <span class="search-icon">⌕</span>
+        <input class="input" type="search" placeholder="Search guest, property or ref…">
+      </div>
+    </div>
+
+    <div class="bk-table">
+      <div class="bk-row head">
+        <span class="bk-cell">Guest</span>
+        <span class="bk-cell">Property</span>
+        <span class="bk-cell">Dates</span>
+        <span class="bk-cell">Channel</span>
+        <span class="bk-cell">Status</span>
+        <span class="bk-cell amt">Total</span>
+      </div>
+
+      <div class="bk-row r" data-href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+        <span class="bk-cell name"><b>Mariam Nasser</b><span>BLG-7K2P9</span></span>
+        <span class="bk-cell" data-label="Property">Downtown Calm Studio</span>
+        <span class="bk-cell" data-label="Dates">12–15 Sep</span>
+        <span class="bk-cell" data-label="Channel">Direct</span>
+        <span class="bk-cell" data-label="Status"><span class="badge badge-available">Confirmed</span></span>
+        <span class="bk-cell amt" data-label="Total">AED 952</span>
+      </div>
+      <div class="bk-row r" data-href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+        <span class="bk-cell name"><b>James Okonkwo</b><span>BLG-7H1M4</span></span>
+        <span class="bk-cell" data-label="Property">Marina Skyline 2-Bed</span>
+        <span class="bk-cell" data-label="Dates">12–18 Sep</span>
+        <span class="bk-cell" data-label="Channel">Belongo</span>
+        <span class="bk-cell" data-label="Status"><span class="badge badge-verified">In-house</span></span>
+        <span class="bk-cell amt" data-label="Total">AED 3,140</span>
+      </div>
+      <div class="bk-row r" data-href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+        <span class="bk-cell name"><b>Aisha Rahman</b><span>BLG-7G8C2</span></span>
+        <span class="bk-cell" data-label="Property">Bur Dubai Souq Loft</span>
+        <span class="bk-cell" data-label="Dates">12–14 Sep</span>
+        <span class="bk-cell" data-label="Channel">Belongo</span>
+        <span class="bk-cell" data-label="Status"><span class="badge badge-pending">Balance due</span></span>
+        <span class="bk-cell amt" data-label="Total">AED 945</span>
+      </div>
+      <div class="bk-row r" data-href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+        <span class="bk-cell name"><b>The Müller family</b><span>BLG-7F2A9</span></span>
+        <span class="bk-cell" data-label="Property">JBR Beachfront 2-Bed</span>
+        <span class="bk-cell" data-label="Dates">9–12 Sep</span>
+        <span class="bk-cell" data-label="Channel">Direct</span>
+        <span class="bk-cell" data-label="Status"><span class="badge badge-verified">Checking out</span></span>
+        <span class="bk-cell amt" data-label="Total">AED 4,200</span>
+      </div>
+      <div class="bk-row r" data-href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+        <span class="bk-cell name"><b>Omar Farouk</b><span>BLG-7D5X1</span></span>
+        <span class="bk-cell" data-label="Property">DIFC Skyline Studio</span>
+        <span class="bk-cell" data-label="Dates">8–12 Sep</span>
+        <span class="bk-cell" data-label="Channel">Belongo</span>
+        <span class="bk-cell" data-label="Status"><span class="badge badge-verified">Checking out</span></span>
+        <span class="bk-cell amt" data-label="Total">AED 2,360</span>
+      </div>
+      <div class="bk-row r" data-href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+        <span class="bk-cell name"><b>Hannah Tan</b><span>BLG-7C3K8</span></span>
+        <span class="bk-cell" data-label="Property">JBR Beachfront 2-Bed</span>
+        <span class="bk-cell" data-label="Dates">20–23 Sep</span>
+        <span class="bk-cell" data-label="Channel">Belongo</span>
+        <span class="bk-cell" data-label="Status"><span class="badge badge-available">Confirmed</span></span>
+        <span class="bk-cell amt" data-label="Total">AED 3,480</span>
+      </div>
+      <div class="bk-row r" data-href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+        <span class="bk-cell name"><b>Sana Iqbal</b><span>BLG-7B9D2</span></span>
+        <span class="bk-cell" data-label="Property">Deira Creekside 1-Bed</span>
+        <span class="bk-cell" data-label="Dates">13–17 Sep</span>
+        <span class="bk-cell" data-label="Channel">Direct</span>
+        <span class="bk-cell" data-label="Status"><span class="badge badge-available">Confirmed</span></span>
+        <span class="bk-cell amt" data-label="Total">AED 1,720</span>
+      </div>
+      <div class="bk-row r" data-href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+        <span class="bk-cell name"><b>Leo Park</b><span>BLG-6Z1Q5</span></span>
+        <span class="bk-cell" data-label="Property">Downtown Calm Studio</span>
+        <span class="bk-cell" data-label="Dates">22–25 Sep</span>
+        <span class="bk-cell" data-label="Channel">Direct</span>
+        <span class="bk-cell" data-label="Status"><span class="badge badge-booked">Completed</span></span>
+        <span class="bk-cell amt" data-label="Total">AED 1,010</span>
+      </div>
+      <div class="bk-row r" data-href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+        <span class="bk-cell name"><b>Nadia Said</b><span>BLG-6Y4W7</span></span>
+        <span class="bk-cell" data-label="Property">Bur Dubai Souq Loft</span>
+        <span class="bk-cell" data-label="Dates">19–22 Sep</span>
+        <span class="bk-cell" data-label="Channel">Direct</span>
+        <span class="bk-cell" data-label="Status"><span class="badge badge-cancelled">Cancelled</span></span>
+        <span class="bk-cell amt" data-label="Total">— refunded</span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/belongo-shared.js" defer></script>
+<script>
+(function () {
+  var sb = document.getElementById('hs-sidebar');
+  var ov = document.querySelector('.hs-overlay');
+  function close() { sb.classList.remove('is-open'); ov.classList.remove('is-on'); }
+  document.querySelectorAll('[data-toggle-sidebar]').forEach(function (b) {
+    b.addEventListener('click', function () { sb.classList.toggle('is-open'); ov.classList.toggle('is-on'); });
+  });
+  document.querySelectorAll('[data-close-sidebar]').forEach(function (b) { b.addEventListener('click', close); });
+  var sw = document.querySelector('[data-switcher]');
+  var menu = document.getElementById('hs-switch-menu');
+  if (sw && menu) {
+    sw.addEventListener('click', function (e) { e.stopPropagation(); var on = menu.classList.toggle('is-on'); sw.setAttribute('aria-expanded', on ? 'true' : 'false'); });
+    document.addEventListener('click', function () { menu.classList.remove('is-on'); sw.setAttribute('aria-expanded', 'false'); });
+  }
+})();
+</script>
+</body>
+</html>

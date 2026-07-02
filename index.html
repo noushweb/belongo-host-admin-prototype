@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belongo — Host &amp; Admin Prototype</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23111'/%3E%3C/svg%3E">
+<style>
+:root { --ink: #111317; --gray: #5b6270; --line: #e3e5e9; --bg: #f7f7f8; --accent: #2f6fed; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--ink); }
+.px-shell { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+.px-hero { background: #fff; border-bottom: 1px solid var(--line); }
+.px-hero-inner { padding-top: 56px; padding-bottom: 40px; }
+.px-tag { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); background: rgba(47,111,237,0.08); border-radius: 999px; padding: 4px 12px; margin-bottom: 16px; }
+.px-hero h1 { font-size: clamp(1.6rem, 3.6vw, 2.3rem); font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; max-width: 640px; margin: 0; }
+.px-hero p { margin-top: 12px; font-size: 15px; line-height: 1.65; color: var(--gray); max-width: 560px; }
+.px-cta { display: flex; align-items: center; gap: 16px; margin-top: 28px; flex-wrap: wrap; }
+.px-btn { display: inline-block; background: var(--ink); color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 8px; padding: 11px 20px; }
+.px-btn:hover { background: #000; }
+.px-note { font-size: 12px; color: var(--gray); }
+.px-section { padding: 44px 0; }
+.px-label { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
+.px-h2 { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 18px; }
+.px-flow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 36px; }
+.px-flow a { display: inline-flex; flex-direction: column; gap: 2px; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; min-width: 108px; text-decoration: none; color: var(--ink); transition: border-color 0.15s; }
+.px-flow a:hover { border-color: var(--accent); }
+.px-flow a .n { font-size: 10px; color: var(--accent); font-weight: 600; }
+.px-flow a .t { font-size: 13px; font-weight: 600; }
+.px-arrow { color: var(--gray); font-weight: 600; }
+.px-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.px-tile { display: block; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 16px; text-decoration: none; color: var(--ink); transition: border-color 0.15s, box-shadow 0.15s; }
+.px-tile:hover { border-color: var(--accent); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.px-tile .id { font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: 0.04em; }
+.px-tile b { font-weight: 700; font-size: 14px; display: block; margin: 3px 0 4px; }
+.px-tile span { font-size: 12px; color: var(--gray); line-height: 1.5; }
+.px-foot { border-top: 1px solid var(--line); padding-top: 24px; padding-bottom: 40px; font-size: 12px; color: var(--gray); }
+@media (max-width: 760px) { .px-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .px-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<section class="px-hero">
+  <div class="px-shell px-hero-inner">
+    <span class="px-tag">Interactive Prototype · Host Portal &amp; Admin ERP</span>
+    <h1>Belongo — the host portal and the admin back office</h1>
+    <p>A high-fidelity, clickable design prototype of the Belongo property-manager portal and the multi-country admin ERP. Start with the host journey, or jump to any screen below.</p>
+    <div class="px-cta">
+      <a class="px-btn" href="belongo-h02-host-dashboard.html">Enter the host portal →</a>
+      <span class="px-note">Best in Chrome · needs internet (photos load from the web) · guest app links open the guest prototype</span>
+    </div>
+  </div>
+</section>
+
+<section class="px-section">
+  <div class="px-shell">
+    <div class="px-label">The host journey</div>
+    <h2 class="px-h2">Follow it end to end</h2>
+    <div class="px-flow">
+      <a href="belongo-h01-host-landing.html"><span class="n">01</span><span class="t">Why host</span></a>
+      <span class="px-arrow">→</span>
+      <a href="belongo-h03-onboarding-wizard.html"><span class="n">02</span><span class="t">Onboard</span></a>
+      <span class="px-arrow">→</span>
+      <a href="belongo-h02-host-dashboard.html"><span class="n">03</span><span class="t">Dashboard</span></a>
+      <span class="px-arrow">→</span>
+      <a href="belongo-h04-bookings.html"><span class="n">04</span><span class="t">Bookings</span></a>
+      <span class="px-arrow">→</span>
+      <a href="belongo-h10-reports.html"><span class="n">05</span><span class="t">Reports</span></a>
+    </div>
+
+    <div class="px-label">Host portal</div>
+    <h2 class="px-h2">Every host screen</h2>
+    <div class="px-grid">
+      <a class="px-tile" href="belongo-h01-host-landing.html"><span class="id">H01</span><b>Host landing</b><span>Why list on Belongo — earnings story, trust, onboarding CTA.</span></a>
+      <a class="px-tile" href="belongo-h02-host-dashboard.html"><span class="id">H02</span><b>Dashboard</b><span>Occupancy, revenue and today's arrivals in one morning view.</span></a>
+      <a class="px-tile" href="belongo-h03-onboarding-wizard.html"><span class="id">H03</span><b>Onboarding wizard</b><span>Six focused steps from address to first listing, with autosave.</span></a>
+      <a class="px-tile" href="belongo-h04-bookings.html"><span class="id">H04</span><b>Bookings</b><span>Reservation pipeline — filters, statuses, payment state.</span></a>
+      <a class="px-tile" href="belongo-h05-availability-calendar.html"><span class="id">H05</span><b>Availability calendar</b><span>Timeline calendar with blocks, syncs and conflict handling.</span></a>
+      <a class="px-tile" href="belongo-h06-properties.html"><span class="id">H06</span><b>Properties</b><span>The portfolio — listings, statuses, completeness.</span></a>
+      <a class="px-tile" href="belongo-h07-pricing.html"><span class="id">H07</span><b>Pricing</b><span>AI price suggestions with host-controlled overrides.</span></a>
+      <a class="px-tile" href="belongo-h08-reviews.html"><span class="id">H08</span><b>Reviews</b><span>Guest feedback, replies and rating trends.</span></a>
+      <a class="px-tile" href="belongo-h09-expenses.html"><span class="id">H09</span><b>Expenses</b><span>Property running costs, categorised and receipted.</span></a>
+      <a class="px-tile" href="belongo-h10-reports.html"><span class="id">H10</span><b>Reports</b><span>Earnings, payouts and statements that reconcile.</span></a>
+      <a class="px-tile" href="belongo-h11-tenants.html"><span class="id">H11</span><b>Tenants</b><span>Long-stay tenants — contracts, renewals, dues.</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="px-section" style="padding-top: 0;">
+  <div class="px-shell">
+    <div class="px-label">Admin · ERP</div>
+    <h2 class="px-h2">The multi-country back office</h2>
+    <div class="px-grid">
+      <a class="px-tile" href="belongo-a01-admin-dashboard.html"><span class="id">A01</span><b>Admin dashboard</b><span>Cross-country KPIs — the whole operation at a glance.</span></a>
+      <a class="px-tile" href="belongo-a02-financials.html"><span class="id">A02</span><b>Financials</b><span>Revenue, cost lines and margin by country.</span></a>
+      <a class="px-tile" href="belongo-a03-occupancy.html"><span class="id">A03</span><b>Occupancy</b><span>Occupancy, ADR and RevPAR across the portfolio.</span></a>
+      <a class="px-tile" href="belongo-a04-users-roles.html"><span class="id">A04</span><b>Users &amp; roles</b><span>Staff accounts, permissions and audit trail.</span></a>
+      <a class="px-tile" href="belongo-a05-expenses.html"><span class="id">A05</span><b>Expenses</b><span>Operating spend, approvals and budget lines.</span></a>
+      <a class="px-tile" href="belongo-a06-reports.html"><span class="id">A06</span><b>Reports</b><span>Exportable statements for finance and owners.</span></a>
+    </div>
+  </div>
+</section>
+
+<div class="px-shell px-foot">
+  Belongo — design prototype for review. Screens are interactive front-end designs (not a live, transacting product). The guest experience lives in the <a href="https://noushweb.github.io/belongo-client-prototype/" style="color:inherit; text-decoration:underline;">guest prototype</a>. © 2026 Belongo Hospitality.
+</div>
+
+</body>
+</html>

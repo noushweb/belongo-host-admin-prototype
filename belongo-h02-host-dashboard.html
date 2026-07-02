@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belongo — Host Dashboard (h02)</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23D4AF37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/belongo-shared.css">
+<style>
+/* ============================================================
+   h02 · HOST DASHBOARD  (.hs-* app shell + .hd-* dashboard)
+   ESTABLISHES THE HOST/ADMIN APP SHELL: fixed navy sidebar +
+   property switcher + sticky topbar + ivory canvas. Reused by
+   h03–h11 and a01–a06 (promote .hs-* to shared.css later).
+   Main page = populated dashboard (established host). New-host
+   empty state + skeletons live in the -states doc.
+   ============================================================ */
+
+body { background: var(--color-soft-beige); }
+
+/* App shell (.hs-*) is defined in belongo-shared.css */
+
+/* ---- KPI row ---- */
+.hd-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); margin-bottom: var(--space-6); }
+.hd-kpi { background: #fff; border: 1px solid rgba(107,114,128,0.14); border-radius: var(--radius-xl); padding: var(--space-5); box-shadow: var(--shadow-xs); transition: transform var(--transition-card), box-shadow var(--transition-card); }
+.hd-kpi[data-href] { cursor: pointer; }
+.hd-kpi[data-href]:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: rgba(212,175,55,0.4); }
+.hd-kpi-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); }
+.hd-kpi-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-warm-gray); }
+.hd-kpi-ico { width: 30px; height: 30px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; background: var(--color-soft-gold-pale); color: var(--color-midnight-navy); font-size: 15px; }
+.hd-kpi-value { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; }
+.hd-kpi-value small { font-size: var(--text-sm); font-weight: 600; color: var(--color-warm-gray); }
+.hd-kpi-sub { font-size: var(--text-xs); color: var(--color-warm-gray); margin-top: var(--space-2); display: flex; align-items: center; gap: 6px; }
+.hd-delta { font-family: var(--font-mono); font-weight: 500; }
+.hd-delta.up { color: var(--color-success); }
+.hd-delta.down { color: var(--color-error); }
+
+/* ---- Layout grid: main + side ---- */
+.hd-grid { display: grid; grid-template-columns: 1.85fr 1fr; gap: var(--space-6); align-items: start; }
+.hd-col { display: flex; flex-direction: column; gap: var(--space-6); }
+
+.hd-card { background: #fff; border: 1px solid rgba(107,114,128,0.14); border-radius: var(--radius-xl); box-shadow: var(--shadow-xs); overflow: hidden; }
+.hd-card-head { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-5) var(--space-5) var(--space-4); border-bottom: 1px solid rgba(107,114,128,0.1); }
+.hd-card-title { font-family: var(--font-display); font-size: var(--text-md); font-weight: 700; letter-spacing: -0.01em; }
+.hd-card-head .link { margin-left: auto; font-size: var(--text-xs); font-weight: 600; color: var(--color-info); }
+.hd-card-head .link:hover { color: var(--color-soft-gold); }
+.hd-card-body { padding: var(--space-5); }
+
+/* today: arrivals / departures */
+.hd-today-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+.hd-today-h { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-warm-gray); margin-bottom: var(--space-3); display: flex; align-items: center; gap: 6px; }
+.hd-today-h .n { background: var(--color-soft-beige); color: var(--color-midnight-navy); border-radius: var(--radius-full); padding: 0 7px; font-size: 10px; }
+.hd-sched { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px dashed rgba(107,114,128,0.18); }
+.hd-sched:last-child { border-bottom: none; }
+.hd-sched-time { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 500; color: var(--color-midnight-navy); width: 46px; flex-shrink: 0; }
+.hd-sched-main { min-width: 0; flex: 1; }
+.hd-sched-main b { display: block; font-size: var(--text-sm); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hd-sched-main span { font-size: var(--text-xs); color: var(--color-warm-gray); }
+.hd-sched-stat { font-family: var(--font-mono); font-size: 10px; white-space: nowrap; display: flex; align-items: center; gap: 4px; }
+.hd-sched-stat.ok { color: var(--color-success); }
+.hd-sched-stat.wait { color: var(--color-warning); }
+
+/* revenue trend */
+.hd-trend { display: flex; align-items: flex-end; gap: var(--space-3); height: 150px; padding-top: var(--space-2); }
+.hd-bar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: var(--space-2); height: 100%; justify-content: flex-end; }
+.hd-bar .fill { width: 100%; max-width: 40px; background: var(--color-soft-beige); border-radius: var(--radius-sm) var(--radius-sm) 0 0; transition: background var(--transition-micro); }
+.hd-bar.now .fill { background: var(--color-midnight-navy); }
+.hd-bar.now .fill::after { content: ""; }
+.hd-bar:hover .fill { background: var(--color-soft-gold); }
+.hd-bar .m { font-family: var(--font-mono); font-size: 10px; color: var(--color-warm-gray); }
+.hd-bar.now .m { color: var(--color-midnight-navy); font-weight: 500; }
+.hd-trend-foot { display: flex; justify-content: space-between; align-items: baseline; margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid rgba(107,114,128,0.1); }
+.hd-trend-foot b { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 800; }
+.hd-trend-foot span { font-size: var(--text-xs); color: var(--color-warm-gray); }
+
+/* recent bookings "table" */
+.hd-btable { display: flex; flex-direction: column; }
+.hd-brow { display: grid; grid-template-columns: 1.5fr 1.4fr 1fr 0.9fr 0.7fr; gap: var(--space-3); align-items: center; padding: var(--space-3) var(--space-5); border-bottom: 1px solid rgba(107,114,128,0.1); }
+.hd-brow:last-child { border-bottom: none; }
+.hd-brow.head { background: var(--color-warm-ivory); }
+.hd-brow.head .hd-bcell { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-warm-gray); }
+.hd-brow.row[data-href] { cursor: pointer; transition: background var(--transition-micro); }
+.hd-brow.row[data-href]:hover { background: var(--color-warm-ivory); }
+.hd-bcell.name b { font-size: var(--text-sm); font-weight: 600; display: block; }
+.hd-bcell.name span { font-family: var(--font-mono); font-size: 10px; color: var(--color-warm-gray); }
+.hd-bcell { font-size: var(--text-sm); color: var(--color-deep-slate); min-width: 0; }
+.hd-bcell .sub { font-size: var(--text-xs); color: var(--color-warm-gray); }
+.hd-bcell.amt { font-family: var(--font-display); font-weight: 700; text-align: right; }
+
+/* needs attention */
+.hd-att { display: flex; flex-direction: column; }
+.hd-att-item { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-4) var(--space-5); border-bottom: 1px solid rgba(107,114,128,0.1); transition: background var(--transition-micro); cursor: pointer; }
+.hd-att-item:last-child { border-bottom: none; }
+.hd-att-item:hover { background: var(--color-warm-ivory); }
+.hd-att-dot { width: 30px; height: 30px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.hd-att-dot.warn { background: var(--color-warning-bg); color: var(--color-warning); }
+.hd-att-dot.info { background: var(--color-info-bg); color: var(--color-info); }
+.hd-att-dot.gold { background: var(--color-soft-gold-pale); color: var(--color-midnight-navy); }
+.hd-att-main { min-width: 0; flex: 1; }
+.hd-att-main b { display: block; font-size: var(--text-sm); font-weight: 600; }
+.hd-att-main span { font-size: var(--text-xs); color: var(--color-warm-gray); }
+.hd-att-main .go { color: var(--color-warm-gray); }
+
+/* payout summary */
+.hd-payout-row { display: flex; align-items: baseline; justify-content: space-between; padding: var(--space-3) 0; border-bottom: 1px dashed rgba(107,114,128,0.18); }
+.hd-payout-row:last-child { border-bottom: none; }
+.hd-payout-row .lab { font-size: var(--text-sm); color: var(--color-warm-gray); }
+.hd-payout-row .val { font-family: var(--font-display); font-weight: 700; font-size: var(--text-md); }
+.hd-payout-row .val small { font-family: var(--font-mono); font-size: 10px; font-weight: 400; color: var(--color-warm-gray); display: block; text-align: right; }
+.hd-payout-next { background: var(--color-midnight-navy); color: var(--color-warm-ivory); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-5); margin-bottom: var(--space-4); }
+.hd-payout-next .lab { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-soft-gold); }
+.hd-payout-next .amt { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 800; letter-spacing: -0.02em; margin: 2px 0; }
+.hd-payout-next .when { font-size: var(--text-xs); color: rgba(247,246,242,0.7); }
+
+/* guest-verified nearby callout */
+.hd-nearby { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-5); background: var(--color-soft-gold-pale); border: 1px solid rgba(212,175,55,0.4); border-radius: var(--radius-xl); }
+.hd-nearby .ico { font-size: 20px; }
+.hd-nearby-main b { display: block; font-size: var(--text-sm); font-weight: 700; }
+.hd-nearby-main span { font-size: var(--text-xs); color: var(--color-deep-slate); }
+
+/* ---- Responsive ---- */
+@media (max-width: 1024px) {
+  .hd-kpis { grid-template-columns: 1fr 1fr; }
+  .hd-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  .hd-kpis { grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .hd-today-split { grid-template-columns: 1fr; gap: var(--space-6); }
+  .hd-brow { grid-template-columns: 1fr; gap: 6px; padding: var(--space-4) var(--space-5); }
+  .hd-brow.head { display: none; }
+  .hd-bcell { display: flex; justify-content: space-between; gap: var(--space-3); align-items: baseline; }
+  .hd-bcell::before { content: attr(data-label); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-warm-gray); flex-shrink: 0; }
+  .hd-bcell.name { display: block; }
+  .hd-bcell.name::before { display: none; }
+  .hd-bcell.amt { text-align: left; }
+}
+@media (max-width: 380px) {
+  .hd-kpis { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ APP SHELL · SIDEBAR ============ -->
+<aside class="hs-sidebar" id="hs-sidebar">
+  <div class="hs-side-logo">
+    <img src="assets/brand/belongo-logo-ondark.svg" alt="Belongo">
+    <span class="tag badge badge-premium">HOST</span>
+  </div>
+
+  <!-- property switcher -->
+  <div class="hs-switch">
+    <button class="hs-switch-btn" type="button" data-switcher aria-haspopup="true" aria-expanded="false">
+      <span class="hs-switch-ava">RS</span>
+      <span class="hs-switch-meta"><b>Roya Stays</b><span>4 properties · 14 units</span></span>
+      <span class="hs-switch-caret">▾</span>
+    </button>
+    <div class="hs-switch-menu" id="hs-switch-menu">
+      <div class="hs-switch-item is-active">Roya Stays <span class="dot"></span></div>
+      <div class="hs-switch-item">Marina Collective <span class="dot"></span></div>
+      <div class="hs-switch-item">Old Town Rentals <span class="dot"></span></div>
+      <div class="hs-switch-item">Coastline Homes <span class="dot"></span></div>
+      <div class="hs-switch-item hs-switch-add">+ Add a property group</div>
+    </div>
+  </div>
+
+  <!-- primary nav -->
+  <nav class="hs-nav">
+    <a class="hs-nav-link is-active" href="belongo-h02-host-dashboard.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a class="hs-nav-link" href="belongo-h04-bookings.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 9.5l1.3 1.3 2.7-2.8"/></svg>
+      Bookings <span class="nl-badge">3</span>
+    </a>
+    <a class="hs-nav-link" href="belongo-h05-availability-calendar.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"/></svg>
+      Calendar
+    </a>
+    <a class="hs-nav-link" href="belongo-h06-properties.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 14V6.2L8 2l5.5 4.2V14z"/><path d="M6.3 14V9.3h3.4V14"/></svg>
+      Properties
+    </a>
+    <a class="hs-nav-link" href="belongo-h07-pricing.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 9.5L9.5 2 14 2l0 4.5L6.5 14z"/><circle cx="11" cy="5" r="1"/></svg>
+      Pricing
+    </a>
+    <a class="hs-nav-link" href="belongo-h08-reviews.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2l1.8 3.8 4.2.5-3.1 2.9.8 4.1L8 11.8 4.3 13.3l.8-4.1L2 6.3l4.2-.5z"/></svg>
+      Reviews <span class="nl-badge">2</span>
+    </a>
+    <div class="hs-nav-sec">Finance</div>
+    <a class="hs-nav-link" href="belongo-h09-expenses.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 2h8l2 2v10l-2-1-1.5 1L8 13l-1.5 1L5 13l-2 1z"/><path d="M5.5 6h5M5.5 9h3"/></svg>
+      Expenses
+    </a>
+    <a class="hs-nav-link" href="belongo-h10-reports.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 13h12M4 13V8M7.5 13V4M11 13V9.5"/></svg>
+      Revenue &amp; P&amp;L
+    </a>
+    <a class="hs-nav-link" href="belongo-h11-tenants.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="6" cy="5.5" r="2.3"/><path d="M2.3 13.5c0-2.3 1.7-3.7 3.7-3.7s3.7 1.4 3.7 3.7"/><path d="M10.5 4.2a2.2 2.2 0 0 1 0 4.3M11.2 9.9c1.6.3 2.7 1.6 2.7 3.6"/></svg>
+      Tenants &amp; leases
+    </a>
+  </nav>
+
+  <!-- foot -->
+  <div class="hs-side-foot">
+    <a class="hs-nav-link" href="https://noushweb.github.io/belongo-client-prototype/belongo-g15-contact.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><path d="M6.2 6.2a1.9 1.9 0 1 1 2.6 2.4c-.5.4-.8.6-.8 1.2"/><circle cx="8" cy="11.6" r="0.5" fill="currentColor" stroke="none"/></svg>
+      Help &amp; support
+    </a>
+    <a class="hs-nav-link" href="https://noushweb.github.io/belongo-client-prototype/belongo-g11-account-settings.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.5v1.8M8 12.7v1.8M14.5 8h-1.8M3.3 8H1.5M12.6 3.4l-1.3 1.3M4.7 11.3l-1.3 1.3M12.6 12.6l-1.3-1.3M4.7 4.7L3.4 3.4"/></svg>
+      Settings
+    </a>
+    <a class="hs-account" href="https://noushweb.github.io/belongo-client-prototype/belongo-g11-account-settings.html">
+      <span class="hs-account-ava">LH</span>
+      <span class="hs-account-meta"><b>Layla Hassan</b><span>Owner · Roya Stays</span></span>
+      <span class="out">⇲</span>
+    </a>
+  </div>
+</aside>
+<div class="hs-overlay" data-close-sidebar></div>
+
+<!-- ============ MAIN ============ -->
+<div class="hs-main">
+  <header class="hs-topbar">
+    <button class="hs-burger" type="button" data-toggle-sidebar aria-label="Open menu"><span></span><span></span><span></span></button>
+    <div class="hs-title">
+      <h1>Dashboard</h1>
+      <p>Good morning, Layla — here’s Friday 12 September</p>
+    </div>
+    <div class="hs-top-actions">
+      <span class="hs-datepill">Last 30 days ▾</span>
+      <button class="hs-bell" type="button" aria-label="Notifications">🔔<span class="dot"></span></button>
+      <a class="btn btn-premium btn-sm" href="belongo-h03-onboarding-wizard.html"><span class="btn-gold-mark">＋</span> <span class="hs-addlabel">Add property</span></a>
+    </div>
+  </header>
+
+  <main class="hs-content">
+
+    <!-- KPI ROW -->
+    <section class="hd-kpis">
+      <div class="hd-kpi" data-href="belongo-h10-reports.html">
+        <div class="hd-kpi-top"><span class="hd-kpi-label">Revenue · Sep MTD</span><span class="hd-kpi-ico">▲</span></div>
+        <div class="hd-kpi-value">AED 84,200</div>
+        <div class="hd-kpi-sub"><span class="hd-delta up">▲ 12%</span> vs August</div>
+      </div>
+      <div class="hd-kpi" data-href="belongo-h05-availability-calendar.html">
+        <div class="hd-kpi-top"><span class="hd-kpi-label">Occupancy · 30 days</span><span class="hd-kpi-ico">◴</span></div>
+        <div class="hd-kpi-value">86<small>%</small></div>
+        <div class="hd-kpi-sub">12 of 14 units booked</div>
+      </div>
+      <div class="hd-kpi" data-href="belongo-h04-bookings.html">
+        <div class="hd-kpi-top"><span class="hd-kpi-label">Check-ins · 7 days</span><span class="hd-kpi-ico">⇲</span></div>
+        <div class="hd-kpi-value">7</div>
+        <div class="hd-kpi-sub">3 arriving today</div>
+      </div>
+      <div class="hd-kpi" data-href="#attention">
+        <div class="hd-kpi-top"><span class="hd-kpi-label">Needs attention</span><span class="hd-kpi-ico">!</span></div>
+        <div class="hd-kpi-value">4</div>
+        <div class="hd-kpi-sub"><span class="hd-delta down">2 urgent</span> · review below</div>
+      </div>
+    </section>
+
+    <div class="hd-grid">
+      <!-- LEFT COLUMN -->
+      <div class="hd-col">
+
+        <!-- Today -->
+        <div class="hd-card">
+          <div class="hd-card-head">
+            <span class="hd-card-title">Today’s schedule</span>
+            <a class="link" href="belongo-h04-bookings.html">All bookings →</a>
+          </div>
+          <div class="hd-card-body">
+            <div class="hd-today-split">
+              <div>
+                <div class="hd-today-h">Arrivals <span class="n">3</span></div>
+                <div class="hd-sched">
+                  <span class="hd-sched-time">15:00</span>
+                  <span class="hd-sched-main"><b>Mariam Nasser</b><span>Downtown Calm Studio</span></span>
+                  <span class="hd-sched-stat ok">✓ code sent</span>
+                </div>
+                <div class="hd-sched">
+                  <span class="hd-sched-time">16:30</span>
+                  <span class="hd-sched-main"><b>James Okonkwo</b><span>Marina Skyline 2-Bed</span></span>
+                  <span class="hd-sched-stat wait">code 24h prior</span>
+                </div>
+                <div class="hd-sched">
+                  <span class="hd-sched-time">18:00</span>
+                  <span class="hd-sched-main"><b>Aisha Rahman</b><span>Bur Dubai Souq Loft</span></span>
+                  <span class="hd-sched-stat ok">✓ code sent</span>
+                </div>
+              </div>
+              <div>
+                <div class="hd-today-h">Departures <span class="n">2</span></div>
+                <div class="hd-sched">
+                  <span class="hd-sched-time">11:00</span>
+                  <span class="hd-sched-main"><b>The Müller family</b><span>JBR Beachfront Two-Bed</span></span>
+                  <span class="hd-sched-stat">checkout</span>
+                </div>
+                <div class="hd-sched">
+                  <span class="hd-sched-time">12:00</span>
+                  <span class="hd-sched-main"><b>Omar Farouk</b><span>DIFC Skyline Studio</span></span>
+                  <span class="hd-sched-stat">checkout</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Revenue trend -->
+        <div class="hd-card">
+          <div class="hd-card-head">
+            <span class="hd-card-title">Revenue trend</span>
+            <a class="link" href="belongo-h10-reports.html">Full report →</a>
+          </div>
+          <div class="hd-card-body">
+            <div class="hd-trend">
+              <div class="hd-bar"><div class="fill" style="height:58%"></div><span class="m">Apr</span></div>
+              <div class="hd-bar"><div class="fill" style="height:66%"></div><span class="m">May</span></div>
+              <div class="hd-bar"><div class="fill" style="height:71%"></div><span class="m">Jun</span></div>
+              <div class="hd-bar"><div class="fill" style="height:80%"></div><span class="m">Jul</span></div>
+              <div class="hd-bar"><div class="fill" style="height:84%"></div><span class="m">Aug</span></div>
+              <div class="hd-bar now"><div class="fill" style="height:92%"></div><span class="m">Sep</span></div>
+            </div>
+            <div class="hd-trend-foot">
+              <div><b>AED 445,800</b> <span>· last 6 months</span></div>
+              <span class="hd-delta up" style="font-size:var(--text-sm)">▲ 9% avg / mo</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent bookings -->
+        <div class="hd-card">
+          <div class="hd-card-head">
+            <span class="hd-card-title">Recent bookings</span>
+            <a class="link" href="belongo-h04-bookings.html">View all →</a>
+          </div>
+          <div class="hd-btable">
+            <div class="hd-brow head">
+              <span class="hd-bcell">Guest</span>
+              <span class="hd-bcell">Property</span>
+              <span class="hd-bcell">Dates</span>
+              <span class="hd-bcell">Status</span>
+              <span class="hd-bcell amt">Total</span>
+            </div>
+            <div class="hd-brow row" data-href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+              <span class="hd-bcell name"><b>Mariam Nasser</b><span>BLG-7K2P9 · Direct</span></span>
+              <span class="hd-bcell" data-label="Property">Downtown Calm Studio</span>
+              <span class="hd-bcell" data-label="Dates">12–15 Sep</span>
+              <span class="hd-bcell" data-label="Status"><span class="badge badge-available">Confirmed</span></span>
+              <span class="hd-bcell amt" data-label="Total">AED 952</span>
+            </div>
+            <div class="hd-brow row" data-href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+              <span class="hd-bcell name"><b>James Okonkwo</b><span>BLG-7H1M4 · Belongo</span></span>
+              <span class="hd-bcell" data-label="Property">Marina Skyline 2-Bed</span>
+              <span class="hd-bcell" data-label="Dates">12–18 Sep</span>
+              <span class="hd-bcell" data-label="Status"><span class="badge badge-available">Confirmed</span></span>
+              <span class="hd-bcell amt" data-label="Total">AED 3,140</span>
+            </div>
+            <div class="hd-brow row" data-href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+              <span class="hd-bcell name"><b>Aisha Rahman</b><span>BLG-7G8C2 · Belongo</span></span>
+              <span class="hd-bcell" data-label="Property">Bur Dubai Souq Loft</span>
+              <span class="hd-bcell" data-label="Dates">12–14 Sep</span>
+              <span class="hd-bcell" data-label="Status"><span class="badge badge-pending">Balance due</span></span>
+              <span class="hd-bcell amt" data-label="Total">AED 945</span>
+            </div>
+            <div class="hd-brow row" data-href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+              <span class="hd-bcell name"><b>The Müller family</b><span>BLG-7F2A9 · Direct</span></span>
+              <span class="hd-bcell" data-label="Property">JBR Beachfront Two-Bed</span>
+              <span class="hd-bcell" data-label="Dates">9–12 Sep</span>
+              <span class="hd-bcell" data-label="Status"><span class="badge badge-verified">Checked in</span></span>
+              <span class="hd-bcell amt" data-label="Total">AED 4,200</span>
+            </div>
+            <div class="hd-brow row" data-href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+              <span class="hd-bcell name"><b>Omar Farouk</b><span>BLG-7D5X1 · Belongo</span></span>
+              <span class="hd-bcell" data-label="Property">DIFC Skyline Studio</span>
+              <span class="hd-bcell" data-label="Dates">8–12 Sep</span>
+              <span class="hd-bcell" data-label="Status"><span class="badge badge-booked">Departing</span></span>
+              <span class="hd-bcell amt" data-label="Total">AED 2,360</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="hd-col">
+
+        <!-- Needs attention -->
+        <div class="hd-card" id="attention">
+          <div class="hd-card-head">
+            <span class="hd-card-title">Needs attention</span>
+            <span class="badge badge-pending">4</span>
+          </div>
+          <div class="hd-att">
+            <a class="hd-att-item" href="belongo-h08-reviews.html">
+              <span class="hd-att-dot info">★</span>
+              <span class="hd-att-main"><b>2 reviews awaiting your reply</b><span>Oldest is 2 days old — reply rate affects ranking. <span class="go">Reply →</span></span></span>
+            </a>
+            <a class="hd-att-item" href="https://noushweb.github.io/belongo-client-prototype/belongo-g09-booking-detail.html">
+              <span class="hd-att-dot warn">!</span>
+              <span class="hd-att-main"><b>Balance due — Aisha Rahman</b><span>AED 472 outstanding, auto-reminder sent. <span class="go">View →</span></span></span>
+            </a>
+            <a class="hd-att-item" href="belongo-h05-availability-calendar.html">
+              <span class="hd-att-dot warn">▦</span>
+              <span class="hd-att-main"><b>Calendar gap — Marina Skyline</b><span>19–22 Sep unsold over a weekend. <span class="go">Open calendar →</span></span></span>
+            </a>
+            <a class="hd-att-item" href="belongo-h07-pricing.html">
+              <span class="hd-att-dot gold">▲</span>
+              <span class="hd-att-main"><b>Price rule expiring</b><span>“Weekend +15%” ends in 3 days. <span class="go">Review pricing →</span></span></span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Payout -->
+        <div class="hd-card">
+          <div class="hd-card-head"><span class="hd-card-title">Payouts</span><a class="link" href="belongo-h10-reports.html">History →</a></div>
+          <div class="hd-card-body">
+            <div class="hd-payout-next">
+              <div class="lab">Next payout</div>
+              <div class="amt">AED 12,840</div>
+              <div class="when">Arrives Tue 16 Sep · •••• 4291</div>
+            </div>
+            <div class="hd-payout-row"><span class="lab">Pending clearance</span><span class="val">AED 3,612</span></div>
+            <div class="hd-payout-row"><span class="lab">Paid this month</span><span class="val">AED 71,360</span></div>
+            <div class="hd-payout-row"><span class="lab">Belongo fee · Sep</span><span class="val">AED 8,420 <small>10% of bookings</small></span></div>
+          </div>
+        </div>
+
+        <!-- Guest-verified nearby (Belongo differentiator) -->
+        <a class="hd-nearby" href="https://noushweb.github.io/belongo-client-prototype/belongo-g13-review-submission.html">
+          <span class="ico">📍</span>
+          <span class="hd-nearby-main"><b>3 guests added nearby places</b><span>New guest-verified spots near your stays this week — boosts listing trust.</span></span>
+        </a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/belongo-shared.js" defer></script>
+<script>
+(function () {
+  var sb = document.getElementById('hs-sidebar');
+  var ov = document.querySelector('.hs-overlay');
+  function close() { sb.classList.remove('is-open'); ov.classList.remove('is-on'); }
+  document.querySelectorAll('[data-toggle-sidebar]').forEach(function (b) {
+    b.addEventListener('click', function () { sb.classList.toggle('is-open'); ov.classList.toggle('is-on'); });
+  });
+  document.querySelectorAll('[data-close-sidebar]').forEach(function (b) { b.addEventListener('click', close); });
+
+  var sw = document.querySelector('[data-switcher]');
+  var menu = document.getElementById('hs-switch-menu');
+  if (sw && menu) {
+    sw.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var on = menu.classList.toggle('is-on');
+      sw.setAttribute('aria-expanded', on ? 'true' : 'false');
+    });
+    document.addEventListener('click', function () { menu.classList.remove('is-on'); sw.setAttribute('aria-expanded', 'false'); });
+  }
+})();
+</script>
+</body>
+</html>

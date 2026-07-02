@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belongo — List your property · Onboarding (h03)</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23D4AF37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/belongo-shared.css">
+<style>
+/* ============================================================
+   h03 · ONBOARDING WIZARD  (.ob-*)  — host journey M2
+   HIGHEST-RISK SCREEN. Full-screen focused stepper (NOT the
+   h02 app shell — minimal chrome cuts drop-off). Save-and-resume,
+   autosave indicator, step rail, inline validation. Main page =
+   Step 3 of 6 (Amenities & faith-aware), steps 1–2 complete.
+   Resume-draft modal / validation-error summary / autosave
+   states live in the -states doc.
+   ============================================================ */
+
+body { background: var(--color-warm-ivory); }
+.ob-shell { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ---- Top bar ---- */
+.ob-top {
+  position: sticky; top: 0; z-index: 60; height: 64px;
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: 0 var(--space-6); background: rgba(247,246,242,0.92);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(107,114,128,0.15);
+}
+.ob-top-logo img { height: 26px; }
+.ob-top-right { margin-left: auto; display: flex; align-items: center; gap: var(--space-4); }
+.ob-autosave { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-success); display: flex; align-items: center; gap: 6px; }
+.ob-autosave .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-success); box-shadow: 0 0 0 3px rgba(45,106,79,0.15); }
+
+/* ---- Body: rail + main ---- */
+.ob-body { flex: 1; display: flex; align-items: flex-start; }
+
+.ob-rail { position: sticky; top: 64px; width: 312px; flex-shrink: 0; align-self: flex-start; padding: var(--space-8) var(--space-6); }
+.ob-rail-head { margin-bottom: var(--space-6); }
+.ob-rail-head .eyebrow { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-warm-gray); }
+.ob-rail-head h2 { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; letter-spacing: -0.02em; margin-top: 2px; }
+.ob-rail-head p { font-size: var(--text-xs); color: var(--color-warm-gray); margin-top: 2px; }
+
+.ob-step { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-3) 0; position: relative; }
+.ob-step::before { content: ""; position: absolute; left: 13px; top: 30px; bottom: -6px; width: 2px; background: rgba(107,114,128,0.2); }
+.ob-step:last-child::before { display: none; }
+.ob-step-mark { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 500; background: var(--color-soft-beige); color: var(--color-warm-gray); border: 1.5px solid rgba(107,114,128,0.25); z-index: 1; }
+.ob-step-txt b { display: block; font-size: var(--text-sm); font-weight: 600; color: var(--color-deep-slate); }
+.ob-step-txt span { font-size: var(--text-xs); color: var(--color-warm-gray); }
+.ob-step.is-done .ob-step-mark { background: var(--color-success); border-color: var(--color-success); color: #fff; }
+.ob-step.is-done::before { background: var(--color-success); }
+.ob-step.is-current .ob-step-mark { background: var(--color-midnight-navy); border-color: var(--color-midnight-navy); color: var(--color-soft-gold); box-shadow: 0 0 0 4px rgba(212,175,55,0.18); }
+.ob-step.is-current .ob-step-txt b { color: var(--color-midnight-navy); }
+
+/* ---- Main form ---- */
+.ob-main { flex: 1; min-width: 0; border-left: 1px solid rgba(107,114,128,0.14); }
+.ob-form { max-width: 640px; margin: 0 auto; padding: var(--space-10) var(--space-8) var(--space-20); }
+.ob-mobprog { display: none; }
+.ob-eyebrow { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-soft-gold); }
+.ob-h1 { font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, var(--text-2xl)); font-weight: 800; letter-spacing: -0.025em; margin: var(--space-2) 0 var(--space-3); }
+.ob-sub { color: var(--color-warm-gray); font-size: var(--text-sm); line-height: 1.6; margin-bottom: var(--space-8); max-width: 540px; }
+
+.ob-card { background: #fff; border: 1px solid rgba(107,114,128,0.16); border-radius: var(--radius-xl); padding: var(--space-6); margin-bottom: var(--space-5); box-shadow: var(--shadow-xs); }
+.ob-card.faith { border-color: rgba(212,175,55,0.5); box-shadow: 0 0 0 1px rgba(212,175,55,0.12); }
+.ob-card-head { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); }
+.ob-card-head h3 { font-family: var(--font-display); font-size: var(--text-md); font-weight: 700; letter-spacing: -0.01em; }
+.ob-card-head .spark { color: var(--color-soft-gold); }
+.ob-card-head .pill { margin-left: auto; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; color: var(--color-warm-gray); background: var(--color-soft-beige); border-radius: var(--radius-full); padding: 2px 9px; }
+.ob-card > .hint { font-size: var(--text-xs); color: var(--color-warm-gray); margin-bottom: var(--space-4); }
+
+/* auto-detected mosque chip */
+.ob-detect { display: flex; align-items: center; gap: var(--space-3); background: var(--color-soft-gold-pale); border: 1px solid rgba(212,175,55,0.45); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); }
+.ob-detect .ico { font-size: 16px; }
+.ob-detect-txt { flex: 1; min-width: 0; font-size: var(--text-xs); color: var(--color-deep-slate); line-height: 1.45; }
+.ob-detect-txt b { font-weight: 700; }
+.ob-detect a { font-weight: 600; color: var(--color-info); white-space: nowrap; }
+
+/* faith-aware toggle rows */
+.ob-feat { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4) 0; border-bottom: 1px solid rgba(107,114,128,0.12); cursor: pointer; }
+.ob-feat:last-child { border-bottom: none; }
+.ob-feat-txt { flex: 1; min-width: 0; }
+.ob-feat-txt b { display: block; font-size: var(--text-sm); font-weight: 600; }
+.ob-feat-txt span { font-size: var(--text-xs); color: var(--color-warm-gray); }
+.ob-switch { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+.ob-switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 2; }
+.ob-switch .track { position: absolute; inset: 0; background: rgba(107,114,128,0.3); border-radius: var(--radius-full); transition: background var(--transition-micro); }
+.ob-switch .track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; box-shadow: var(--shadow-xs); transition: transform var(--transition-micro); }
+.ob-switch input:checked + .track { background: var(--color-midnight-navy); }
+.ob-switch input:checked + .track::after { transform: translateX(20px); background: var(--color-soft-gold); }
+
+/* conditional sub-field */
+.ob-subfield { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px dashed rgba(107,114,128,0.2); }
+.ob-subfield .form-label { margin-bottom: var(--space-2); }
+
+/* everyday amenities grid */
+.ob-amen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3) var(--space-5); }
+.ob-amen-grid .check-wrap { padding: var(--space-1) 0; }
+.ob-more { display: inline-block; margin-top: var(--space-4); font-size: var(--text-sm); font-weight: 600; color: var(--color-info); }
+.ob-more:hover { color: var(--color-soft-gold); }
+
+/* ---- Sticky footer nav ---- */
+.ob-foot { position: sticky; bottom: 0; z-index: 60; background: rgba(247,246,242,0.94); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-top: 1px solid rgba(107,114,128,0.15); }
+.ob-foot-inner { max-width: 1080px; margin: 0 auto; padding: var(--space-4) var(--space-8); display: flex; align-items: center; gap: var(--space-4); }
+.ob-foot-prog { display: flex; align-items: center; gap: var(--space-3); }
+.ob-foot-prog .lab { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-warm-gray); white-space: nowrap; }
+.ob-foot-prog .bar { width: 140px; height: 5px; background: rgba(107,114,128,0.2); border-radius: var(--radius-full); overflow: hidden; }
+.ob-foot-prog .bar span { display: block; height: 100%; width: 50%; background: var(--color-soft-gold); border-radius: var(--radius-full); }
+.ob-foot-btns { margin-left: auto; display: flex; align-items: center; gap: var(--space-3); }
+
+/* ---- Responsive ---- */
+@media (max-width: 960px) {
+  .ob-rail { display: none; }
+  .ob-mobprog { display: block; padding: var(--space-4) var(--space-6) 0; }
+  .ob-mobprog-top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: var(--space-2); }
+  .ob-mobprog-top b { font-family: var(--font-display); font-size: var(--text-sm); font-weight: 700; }
+  .ob-mobprog-top span { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-warm-gray); }
+  .ob-mobprog .bar { height: 5px; background: rgba(107,114,128,0.2); border-radius: var(--radius-full); overflow: hidden; }
+  .ob-mobprog .bar span { display: block; height: 100%; width: 50%; background: var(--color-soft-gold); border-radius: var(--radius-full); }
+  .ob-form { padding: var(--space-6) var(--space-6) var(--space-20); }
+}
+@media (max-width: 560px) {
+  .ob-top { padding: 0 var(--space-4); }
+  .ob-autosave .as-label { display: none; }
+  .ob-amen-grid { grid-template-columns: 1fr; gap: var(--space-2); }
+  .ob-foot-inner { padding: var(--space-3) var(--space-4); gap: var(--space-3); }
+  .ob-foot-prog { display: none; }
+  .ob-foot-btns { margin-left: 0; flex: 1; }
+  .ob-foot-btns .btn { flex: 1; }
+  .ob-foot-back { flex: 0 0 auto !important; }
+}
+</style>
+</head>
+<body>
+<div class="ob-shell">
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="ob-top">
+    <a class="ob-top-logo" href="belongo-h02-host-dashboard.html"><img src="assets/brand/belongo-logo-onlight.svg" alt="Belongo"></a>
+    <div class="ob-top-right">
+      <span class="ob-autosave"><span class="dot"></span><span class="as-label">Saved just now</span></span>
+      <a class="btn btn-ghost btn-sm" href="belongo-h02-host-dashboard.html">Save &amp; exit</a>
+    </div>
+  </header>
+
+  <!-- ============ BODY ============ -->
+  <div class="ob-body">
+
+    <!-- step rail -->
+    <aside class="ob-rail">
+      <div class="ob-rail-head">
+        <div class="eyebrow">New listing</div>
+        <h2>List your property</h2>
+        <p>Roya Stays · draft saved automatically</p>
+      </div>
+      <div class="ob-step is-done">
+        <span class="ob-step-mark">✓</span>
+        <span class="ob-step-txt"><b>The basics</b><span>Entire studio · sleeps 2</span></span>
+      </div>
+      <div class="ob-step is-done">
+        <span class="ob-step-mark">✓</span>
+        <span class="ob-step-txt"><b>Location</b><span>Downtown Dubai</span></span>
+      </div>
+      <div class="ob-step is-current">
+        <span class="ob-step-mark">3</span>
+        <span class="ob-step-txt"><b>Amenities &amp; features</b><span>In progress</span></span>
+      </div>
+      <div class="ob-step">
+        <span class="ob-step-mark">4</span>
+        <span class="ob-step-txt"><b>Photos</b><span>Up next</span></span>
+      </div>
+      <div class="ob-step">
+        <span class="ob-step-mark">5</span>
+        <span class="ob-step-txt"><b>Pricing &amp; rules</b></span>
+      </div>
+      <div class="ob-step">
+        <span class="ob-step-mark">6</span>
+        <span class="ob-step-txt"><b>Payout &amp; publish</b></span>
+      </div>
+    </aside>
+
+    <!-- main form -->
+    <main class="ob-main">
+
+      <!-- mobile progress (≤960) -->
+      <div class="ob-mobprog">
+        <div class="ob-mobprog-top"><b>Amenities &amp; features</b><span>Step 3 of 6</span></div>
+        <div class="bar"><span></span></div>
+      </div>
+
+      <div class="ob-form">
+        <div class="ob-eyebrow">Step 3 of 6 · Amenities</div>
+        <h1 class="ob-h1">What does your place offer?</h1>
+        <p class="ob-sub">Guests filter by these. Faith-aware features help Belongo match you with the right travellers — you can change any of this later.</p>
+
+        <!-- Faith & family -->
+        <div class="ob-card faith">
+          <div class="ob-card-head">
+            <span class="spark">✦</span>
+            <h3>Faith &amp; family</h3>
+            <span class="pill">Most-used filters</span>
+          </div>
+          <p class="hint">These set Belongo apart — guests searching “near a mosque” or “prayer-friendly” will see your place first.</p>
+
+          <div class="ob-detect">
+            <span class="ico">📍</span>
+            <span class="ob-detect-txt"><b>Al Rahim Mosque · 400 m walk</b> — auto-detected from your address in step 2. Shown to guests as a verified distance.</span>
+            <a href="#">Edit</a>
+          </div>
+
+          <label class="ob-feat">
+            <span class="ob-feat-txt"><b>Qibla direction marked in-room</b><span>A wall marker or decal showing the direction of prayer</span></span>
+            <span class="ob-switch"><input type="checkbox" checked aria-label="Qibla direction marked"><span class="track"></span></span>
+          </label>
+          <label class="ob-feat">
+            <span class="ob-feat-txt"><b>Prayer mats provided</b><span>Clean mats available in the unit</span></span>
+            <span class="ob-switch"><input type="checkbox" checked aria-label="Prayer mats provided"><span class="track"></span></span>
+          </label>
+          <label class="ob-feat">
+            <span class="ob-feat-txt"><b>Bidet / handheld bidet</b><span>In at least one bathroom</span></span>
+            <span class="ob-switch"><input type="checkbox" checked aria-label="Bidet"><span class="track"></span></span>
+          </label>
+          <label class="ob-feat">
+            <span class="ob-feat-txt"><b>Halal-friendly kitchen</b><span>No pork or alcohol prepared; guests may request</span></span>
+            <span class="ob-switch"><input type="checkbox" aria-label="Halal-friendly kitchen"><span class="track"></span></span>
+          </label>
+
+          <div class="ob-subfield">
+            <label class="form-label" for="qibla-method">How is the Qibla marked?</label>
+            <div class="select-wrap">
+              <select class="input" id="qibla-method">
+                <option>Wall decal / sticker</option>
+                <option selected>Framed marker</option>
+                <option>Compass card provided</option>
+                <option>Ceiling marker</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Everyday amenities -->
+        <div class="ob-card">
+          <div class="ob-card-head"><h3>Everyday amenities</h3><span class="pill">6 selected</span></div>
+          <div class="ob-amen-grid">
+            <label class="check-wrap"><input type="checkbox" checked><span class="check-label">Wifi · 600 Mbps</span></label>
+            <label class="check-wrap"><input type="checkbox" checked><span class="check-label">Air conditioning</span></label>
+            <label class="check-wrap"><input type="checkbox" checked><span class="check-label">Kitchen</span></label>
+            <label class="check-wrap"><input type="checkbox" checked><span class="check-label">Washer</span></label>
+            <label class="check-wrap"><input type="checkbox" checked><span class="check-label">Dedicated workspace</span></label>
+            <label class="check-wrap"><input type="checkbox" checked><span class="check-label">Blackout curtains</span></label>
+            <label class="check-wrap"><input type="checkbox"><span class="check-label">Smart TV</span></label>
+            <label class="check-wrap"><input type="checkbox"><span class="check-label">Free parking</span></label>
+            <label class="check-wrap"><input type="checkbox"><span class="check-label">Pool</span></label>
+            <label class="check-wrap"><input type="checkbox"><span class="check-label">Gym</span></label>
+            <label class="check-wrap"><input type="checkbox"><span class="check-label">Elevator</span></label>
+            <label class="check-wrap"><input type="checkbox"><span class="check-label">Balcony</span></label>
+          </div>
+          <a class="ob-more" href="#">+ Show 24 more amenities</a>
+        </div>
+
+        <!-- Standout -->
+        <div class="ob-card">
+          <div class="ob-card-head"><h3>Anything that makes it special?</h3><span class="pill">Optional</span></div>
+          <textarea class="input" rows="3" placeholder="e.g. Rooftop majlis with skyline views · 2-minute walk to the metro · quiet building, families welcome…"></textarea>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ============ STICKY FOOTER NAV ============ -->
+  <footer class="ob-foot">
+    <div class="ob-foot-inner">
+      <div class="ob-foot-prog">
+        <span class="lab">Step 3 of 6</span>
+        <span class="bar"><span></span></span>
+      </div>
+      <div class="ob-foot-btns">
+        <a class="btn btn-secondary btn-md ob-foot-back" href="#">Back</a>
+        <a class="btn btn-premium btn-md" href="#"><span class="btn-gold-mark">→</span> Continue</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+<script src="assets/belongo-shared.js" defer></script>
+</body>
+</html>
