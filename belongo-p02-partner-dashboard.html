@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belongo — Partner dashboard (p02)</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23D4AF37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/belongo-shared.css">
+<style>
+body { background: var(--color-soft-beige); }
+/* p02 · PARTNER DASHBOARD (.pd-*) — region-scoped. */
+.pdb-region { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; background: var(--color-midnight-navy); color: var(--color-warm-ivory); border-radius: var(--radius-xl); padding: var(--space-4) var(--space-5); margin-bottom: var(--space-5); font-size: var(--text-sm); }
+.pdb-region b { color: var(--color-soft-gold); }
+.pdb-region span.s { font-size: var(--text-xs); color: rgba(247,246,242,0.7); margin-left: auto; }
+.pdb-kpis { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--space-4); margin-bottom: var(--space-5); }
+.pdb-kpi { background: #fff; border: 1px solid rgba(107,114,128,0.16); border-radius: var(--radius-xl); padding: var(--space-5); box-shadow: var(--shadow-xs); }
+.pdb-kpi span { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-warm-gray); }
+.pdb-kpi b { display: block; font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 800; margin-top: var(--space-2); }
+.pdb-kpi small { font-size: var(--text-xs); color: var(--color-warm-gray); }
+.pdb-grid { display: grid; grid-template-columns: minmax(0,1.3fr) minmax(0,1fr); gap: var(--space-5); align-items: start; }
+.pdb-card { background: #fff; border: 1px solid rgba(107,114,128,0.16); border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-xs); margin-bottom: var(--space-5); }
+.pdb-card h3 { font-family: var(--font-display); font-size: var(--text-md); font-weight: 700; margin-bottom: var(--space-4); }
+.pdb-task { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-3) 0; border-bottom: 1px solid rgba(107,114,128,0.1); font-size: var(--text-sm); }
+.pdb-task:last-child { border-bottom: none; }
+.pdb-task .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-soft-gold); margin-top: 7px; flex-shrink: 0; }
+.pdb-task small { display: block; font-size: var(--text-xs); color: var(--color-warm-gray); }
+.pdb-task a { margin-left: auto; font-size: var(--text-xs); font-weight: 600; border-bottom: 1px solid var(--color-soft-gold); white-space: nowrap; flex-shrink: 0; }
+.pdb-lvl .bar { height: 8px; border-radius: 99px; background: var(--color-soft-beige); overflow: hidden; margin: var(--space-1) 0 var(--space-3); }
+.pdb-lvl .bar i { display: block; height: 100%; background: var(--color-soft-gold); border-radius: 99px; }
+.pdb-lvl .row { display: flex; justify-content: space-between; font-size: var(--text-xs); color: var(--color-warm-gray); }
+.pdb-lvl .row b { color: var(--color-midnight-navy); }
+@media (max-width: 1100px) { .pdb-grid { grid-template-columns: minmax(0,1fr); } }
+@media (max-width: 860px) { .pdb-kpis { grid-template-columns: repeat(2, minmax(0,1fr)); } .pdb-region span.s { margin-left: 0; } }
+@media (max-width: 560px) { .pdb-kpi b { font-size: var(--text-xl); white-space: nowrap; } }
+</style>
+</head>
+<body>
+<aside class="hs-sidebar" id="hs-sidebar">
+  <div class="hs-side-logo">
+    <img src="assets/brand/belongo-logo-ondark.svg" alt="Belongo">
+    <span class="tag badge badge-premium">PARTNER</span>
+  </div>
+  <div class="hs-switch">
+    <button class="hs-switch-btn" type="button" data-switcher aria-haspopup="true" aria-expanded="false">
+      <span class="hs-switch-ava globe" style="background:var(--color-deep-slate);color:var(--color-soft-gold)">AD</span>
+      <span class="hs-switch-meta"><b>Abu Dhabi</b><span>Your region · 9 listings</span></span>
+      <span class="hs-switch-caret">▾</span>
+    </button>
+    <div class="hs-switch-menu" id="hs-switch-menu">
+      <div class="hs-switch-item is-active">Abu Dhabi, UAE <span class="dot"></span></div>
+      <div class="hs-switch-item" style="color:rgba(247,246,242,0.7);cursor:default">Other regions are not assigned to you</div>
+    </div>
+  </div>
+  <nav class="hs-nav">
+    <a class="hs-nav-link is-active" href="belongo-p02-partner-dashboard.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a class="hs-nav-link" href="belongo-p03-partner-listings.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 14V6.2L8 2l5.5 4.2V14z"/><path d="M6.3 14V9.3h3.4V14"/></svg>
+      Listings
+    </a>
+    <a class="hs-nav-link" href="belongo-p05-pricing-availability.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"/></svg>
+      Pricing &amp; availability
+    </a>
+    <a class="hs-nav-link" href="belongo-p06-partner-bookings.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 9.5l1.3 1.3 2.7-2.8"/></svg>
+      Bookings
+    </a>
+    <div class="hs-nav-sec">Earnings &amp; support</div>
+    <a class="hs-nav-link" href="belongo-p07-commissions.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><path d="M8 4.5v7M6 6.3c0-.8.9-1.3 2-1.3s2 .5 2 1.3-.9 1.1-2 1.4-2 .6-2 1.4.9 1.3 2 1.3 2-.5 2-1.3"/></svg>
+      Commissions
+    </a>
+    <a class="hs-nav-link" href="belongo-p08-partner-messages.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 3h11v7.5h-6L4.5 13v-2.5h-2z"/></svg>
+      Messages <span class="nl-badge">2</span>
+    </a>
+  </nav>
+  <div class="hs-side-foot">
+    <a class="hs-nav-link" href="https://noushweb.github.io/belongo-client-prototype/belongo-g15-contact.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><path d="M6.2 6.2a1.9 1.9 0 1 1 2.6 2.4c-.5.4-.8.6-.8 1.2"/><circle cx="8" cy="11.6" r="0.5" fill="currentColor" stroke="none"/></svg>
+      Help &amp; support
+    </a>
+    <a class="hs-account" href="belongo-p08-partner-messages.html">
+      <span class="hs-account-ava">NF</span>
+      <span class="hs-account-meta"><b>Nadia Farouk</b><span>Local Curator · Approved</span></span>
+      <span class="out">⇲</span>
+    </a>
+  </div>
+</aside>
+<div class="hs-overlay" data-close-sidebar></div>
+
+<div class="hs-main">
+  <header class="hs-topbar">
+    <button class="hs-burger" type="button" data-toggle-sidebar aria-label="Open menu"><span></span><span></span><span></span></button>
+    <div class="hs-title">
+      <h1>Dashboard</h1>
+      <p>Abu Dhabi · Local Curator</p>
+    </div>
+    <div class="hs-top-actions">
+      <button class="hs-bell" type="button" aria-label="Notifications">🔔<span class="dot"></span></button>
+      <a class="btn btn-premium btn-sm" href="belongo-p04-add-property.html"><span class="btn-gold-mark">＋</span> <span class="hs-addlabel">Add property</span></a>
+    </div>
+  </header>
+
+  <main class="hs-content">
+<div class="pdb-region"><span class="rec-badge verified" style="background:transparent;color:var(--color-soft-gold);border-color:var(--color-soft-gold)">Local Curator &middot; Approved</span><span>Your region: <b>Abu Dhabi, UAE</b></span><span class="s">You see only the 9 listings assigned to you.</span></div>
+<div class="pdb-kpis">
+  <div class="pdb-kpi"><span>Listings</span><b>9</b><small>7 live &middot; 1 in review &middot; 1 draft</small></div>
+  <div class="pdb-kpi"><span>Bookings &middot; Sep</span><b>6</b><small>AED 12,440 booked</small></div>
+  <div class="pdb-kpi"><span>Commission &middot; Sep</span><b>AED 373.20</b><small>AED 141.00 paid</small></div>
+  <div class="pdb-kpi"><span>Quality score</span><b>92 / 100</b><small>Trusted Curator at 95</small></div>
+</div>
+<div class="pdb-grid">
+<div>
+  <div class="pdb-card">
+    <h3>Needs your attention</h3>
+    <div class="pdb-task"><span class="dot"></span><span>Prices out of date on 2 listings<small>Al Reem Island 1-Bed and Khalidiyah Garden Suite, not updated for over 14 days</small></span><a href="belongo-p05-pricing-availability.html">Update prices</a></div>
+    <div class="pdb-task"><span class="dot"></span><span>Raha Beach Penthouse is still a draft<small>Needs 6 more photos and a description before review</small></span><a href="belongo-p04-add-property.html">Finish listing</a></div>
+    <div class="pdb-task"><span class="dot"></span><span>Belongo asked a question<small>About the entrance photos on Al Bateen Marina View</small></span><a href="belongo-p08-partner-messages.html">Reply</a></div>
+  </div>
+  <div class="pdb-card">
+    <h3>Next arrival</h3>
+    <div class="pdb-task" style="border:none"><span class="dot" style="background:var(--color-success)"></span><span>BLG-6C5R8 &middot; Mushrif Courtyard Villa<small>14 – 17 Sep &middot; Fatima A. &middot; AED 3,120</small></span><a href="belongo-p06-partner-bookings.html">All bookings</a></div>
+  </div>
+</div>
+<div>
+  <div class="pdb-card pdb-lvl">
+    <h3>Your level</h3>
+    <p style="font-size:var(--text-sm);margin-bottom:var(--space-4)"><span class="badge badge-verified">Approved</span> &nbsp;&rarr;&nbsp; <span class="badge badge-premium">Trusted Curator</span></p>
+    <div class="row"><span>Quality score</span><b>92 / 95</b></div><div class="bar"><i style="width:97%"></i></div>
+    <div class="row"><span>Live listings</span><b>7 / 10</b></div><div class="bar"><i style="width:70%"></i></div>
+    <div class="row"><span>Months active</span><b>4 / 6</b></div><div class="bar"><i style="width:67%"></i></div>
+    <p style="font-size:var(--text-xs);color:var(--color-warm-gray);margin-top:var(--space-3);line-height:1.6">Trusted Curators publish listings directly. Belongo reviews each step before granting the level.</p>
+  </div>
+</div>
+</div>
+  </main>
+</div>
+
+<script src="assets/belongo-shared.js" defer></script>
+<script>
+(function () {
+  var sb = document.getElementById('hs-sidebar');
+  var ov = document.querySelector('.hs-overlay');
+  function close() { sb.classList.remove('is-open'); ov.classList.remove('is-on'); }
+  document.querySelectorAll('[data-toggle-sidebar]').forEach(function (b) {
+    b.addEventListener('click', function () { sb.classList.toggle('is-open'); ov.classList.toggle('is-on'); });
+  });
+  document.querySelectorAll('[data-close-sidebar]').forEach(function (b) { b.addEventListener('click', close); });
+  var sw = document.querySelector('[data-switcher]');
+  var menu = document.getElementById('hs-switch-menu');
+  if (sw && menu) {
+    sw.addEventListener('click', function (e) { e.stopPropagation(); var on = menu.classList.toggle('is-on'); sw.setAttribute('aria-expanded', on ? 'true' : 'false'); });
+    document.addEventListener('click', function () { menu.classList.remove('is-on'); sw.setAttribute('aria-expanded', 'false'); });
+  }
+})();
+</script>
+</body>
+</html>

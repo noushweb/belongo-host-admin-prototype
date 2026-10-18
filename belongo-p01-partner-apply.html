@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belongo — Become a Local Curator (p01)</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23D4AF37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/belongo-shared.css">
+<style>
+body { background: var(--color-soft-beige); }
+/* p01 · BECOME A LOCAL CURATOR (.ap-*) — public application; manual review, never automatic. */
+.ca-top { background: var(--color-warm-ivory); border-bottom: 1px solid rgba(107,114,128,0.15); }
+.ca-top-in { max-width: 1080px; margin: 0 auto; padding: 0 var(--space-6); height: 68px; display: flex; align-items: center; justify-content: space-between; }
+.ca-top img { height: 30px; }
+.ca-top a.l { font-size: var(--text-sm); font-weight: 600; }
+.ca-hero { background: linear-gradient(165deg, #0D1B2A 0%, #14263d 100%); color: var(--color-warm-ivory); position: relative; overflow: hidden; }
+.ca-hero::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 55% 70% at 92% 0%, rgba(212,175,55,0.24), transparent 58%); pointer-events: none; }
+.ca-hero-in { max-width: 1080px; margin: 0 auto; padding: var(--space-12) var(--space-6); position: relative; }
+.ca-eyebrow { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-soft-gold); margin-bottom: var(--space-3); }
+.ca-hero h1 { font-family: var(--font-display); font-size: clamp(1.9rem, 4.2vw, 2.8rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; max-width: 640px; }
+.ca-hero h1 em { font-style: normal; color: var(--color-soft-gold); }
+.ca-hero p { margin-top: var(--space-4); color: rgba(247,246,242,0.75); max-width: 560px; line-height: 1.65; }
+.ca-body { max-width: 1080px; margin: 0 auto; padding: var(--space-10) var(--space-6) var(--space-16); display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: var(--space-8); align-items: start; }
+.ca-card { background: #fff; border: 1px solid rgba(107,114,128,0.16); border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-xs); margin-bottom: var(--space-5); }
+.ca-card h2 { font-family: var(--font-display); font-size: var(--text-md); font-weight: 700; margin-bottom: var(--space-4); }
+.ca-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-4); }
+.ca-f { margin-bottom: var(--space-4); }
+.ca-row .ca-f { margin-bottom: 0; }
+.ca-l { display: block; font-size: var(--text-sm); font-weight: 600; margin-bottom: var(--space-2); }
+.ca-i { width: 100%; box-sizing: border-box; border: 1.5px solid rgba(107,114,128,0.3); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); font-family: var(--font-body); font-size: var(--text-sm); color: var(--color-midnight-navy); background: #fff; }
+.ca-i:focus { outline: none; border-color: var(--color-soft-gold); box-shadow: 0 0 0 3px rgba(212,175,55,0.15); }
+textarea.ca-i { min-height: 96px; resize: vertical; line-height: 1.6; }
+.ca-id { display: flex; align-items: center; gap: var(--space-3); border: 2px dashed rgba(107,114,128,0.4); border-radius: var(--radius-lg); padding: var(--space-4); font-size: var(--text-sm); color: var(--color-warm-gray); }
+.ca-steps { list-style: none; counter-reset: s; display: grid; gap: var(--space-4); }
+.ca-steps li { counter-increment: s; display: flex; gap: var(--space-3); font-size: var(--text-sm); line-height: 1.5; }
+.ca-steps li::before { content: counter(s); width: 24px; height: 24px; border-radius: 50%; background: var(--color-midnight-navy); color: var(--color-soft-gold); font-size: var(--text-xs); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ca-steps b { display: block; }
+.ca-steps span { font-size: var(--text-xs); color: var(--color-warm-gray); }
+.ca-side { position: sticky; top: var(--space-6); }
+.ca-note { font-size: var(--text-xs); color: var(--color-warm-gray); line-height: 1.6; margin-top: var(--space-3); }
+@media (max-width: 960px) { .ca-body { grid-template-columns: minmax(0,1fr); } .ca-side { position: static; order: -1; } }
+@media (max-width: 560px) { .ca-row { grid-template-columns: minmax(0,1fr); gap: var(--space-4); } }
+</style>
+</head>
+<body>
+<header class="ca-top"><div class="ca-top-in"><a href="https://noushweb.github.io/belongo-client-prototype/belongo-g02-landing-command.html"><img src="assets/brand/belongo-logo-onlight.svg" alt="Belongo"></a><a class="l" href="belongo-p02-partner-dashboard.html">Already a partner? Sign in</a></div></header>
+<section class="ca-hero"><div class="ca-hero-in"><div class="ca-eyebrow">Belongo Partner Network</div><h1>Be the <em>local expert</em> behind great stays</h1><p>Belongo is not an open marketplace. We work with a small network of trusted Local Curators who find, check and look after quality stays in their own city.</p></div></section>
+<div class="ca-body">
+<div>
+  <div class="ca-card"><h2>Your application</h2>
+    <div class="ca-row"><div class="ca-f"><label class="ca-l" for="ca-n">Full name</label><input class="ca-i" id="ca-n" type="text" placeholder="Hamad Al Suwaidi"></div><div class="ca-f"><label class="ca-l" for="ca-e">Email</label><input class="ca-i" id="ca-e" type="email" placeholder="hamad@example.com"></div></div>
+    <div class="ca-row"><div class="ca-f"><label class="ca-l" for="ca-p">Mobile</label><input class="ca-i" id="ca-p" type="text" placeholder="+971 50 000 0000"></div><div class="ca-f"><label class="ca-l" for="ca-r">City or region you know best</label><input class="ca-i" id="ca-r" type="text" placeholder="e.g. Sharjah, UAE"></div></div>
+    <div class="ca-row"><div class="ca-f"><label class="ca-l" for="ca-t">Applying as</label><select class="ca-i" id="ca-t"><option>An individual</option><option>A company</option></select></div><div class="ca-f"><label class="ca-l" for="ca-c">Properties you could look after</label><select class="ca-i" id="ca-c"><option>1 – 5</option><option>6 – 15</option><option>16 or more</option></select></div></div>
+    <div class="ca-f"><label class="ca-l" for="ca-w">Why you, and what do you know about local stays?</label><textarea class="ca-i" id="ca-w" placeholder="Tell us about your experience with hospitality, property or the area."></textarea></div>
+  </div>
+  <div class="ca-card"><h2>Verify your identity</h2>
+    <div class="ca-id"><span>&#128196;</span><span>Upload your passport or Emirates ID (front and back)</span></div>
+    <p class="ca-note">Your documents are used only to confirm who you are and are stored securely.</p>
+  </div>
+  <a class="btn btn-premium btn-lg" href="#">Submit application</a>
+  <p class="ca-note">By applying you agree to Belongo&rsquo;s partner terms. Submitting does not guarantee approval.</p>
+</div>
+<aside class="ca-side">
+  <div class="ca-card"><h2>What happens next</h2>
+    <ol class="ca-steps">
+      <li><span><b>You apply</b>Takes about five minutes.</span></li>
+      <li><span><b>We verify your identity</b>Document check by our team.</span></li>
+      <li><span><b>Belongo reviews you</b>A person reads every application.</span></li>
+      <li><span><b>Approved or declined</b>You hear from us within seven days.</span></li>
+      <li><span><b>We assign your region</b>You manage only listings in that area.</span></li>
+    </ol>
+  </div>
+  <div class="ca-card"><h2>What you do</h2>
+    <p style="font-size:var(--text-sm);line-height:1.65;color:var(--color-deep-slate)">Find quality stays, check the details, upload photos, keep prices and availability up to date, support hosts and earn a commission on bookings.</p>
+  </div>
+</aside>
+</div>
+
+<script src="assets/belongo-shared.js" defer></script>
+<script>
+(function () {
+  var sb = document.getElementById('hs-sidebar');
+  var ov = document.querySelector('.hs-overlay');
+  function close() { sb.classList.remove('is-open'); ov.classList.remove('is-on'); }
+  document.querySelectorAll('[data-toggle-sidebar]').forEach(function (b) {
+    b.addEventListener('click', function () { sb.classList.toggle('is-open'); ov.classList.toggle('is-on'); });
+  });
+  document.querySelectorAll('[data-close-sidebar]').forEach(function (b) { b.addEventListener('click', close); });
+  var sw = document.querySelector('[data-switcher]');
+  var menu = document.getElementById('hs-switch-menu');
+  if (sw && menu) {
+    sw.addEventListener('click', function (e) { e.stopPropagation(); var on = menu.classList.toggle('is-on'); sw.setAttribute('aria-expanded', on ? 'true' : 'false'); });
+    document.addEventListener('click', function () { menu.classList.remove('is-on'); sw.setAttribute('aria-expanded', 'false'); });
+  }
+})();
+</script>
+</body>
+</html>

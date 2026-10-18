@@ -15,7 +15,7 @@
 body { background: var(--color-soft-beige); }
 
 .ex-sum { display: flex; gap: var(--space-6); background: #fff; border: 1px solid rgba(107,114,128,0.16); border-radius: var(--radius-xl); padding: var(--space-5) var(--space-6); box-shadow: var(--shadow-xs); margin-bottom: var(--space-5); flex-wrap: wrap; }
-.ex-stat span { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-warm-gray); margin-bottom: 2px; }
+.ex-stat span { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-warm-gray); margin-bottom: 2px; }
 .ex-stat b { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 800; letter-spacing: -0.02em; }
 .ex-stat.net { margin-left: auto; text-align: right; }
 .ex-stat.net b { color: var(--color-success); }
@@ -24,7 +24,7 @@ body { background: var(--color-soft-beige); }
 .ex-row { display: grid; grid-template-columns: 0.7fr 0.9fr 1.2fr 1.3fr 0.8fr 0.8fr; gap: var(--space-3); align-items: center; padding: var(--space-4) var(--space-5); border-bottom: 1px solid rgba(107,114,128,0.1); }
 .ex-row:last-child { border-bottom: none; }
 .ex-row.head { background: var(--color-warm-ivory); }
-.ex-row.head .ex-cell { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-warm-gray); }
+.ex-row.head .ex-cell { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-warm-gray); }
 .ex-cell { font-size: var(--text-sm); color: var(--color-deep-slate); min-width: 0; }
 .ex-cell.date { font-family: var(--font-mono); font-size: var(--text-xs); }
 .ex-cell.cat { display: flex; align-items: center; gap: 7px; font-weight: 600; }
@@ -35,7 +35,7 @@ body { background: var(--color-soft-beige); }
   .ex-row { grid-template-columns: 1fr; gap: 6px; }
   .ex-row.head { display: none; }
   .ex-cell { display: flex; justify-content: space-between; gap: var(--space-3); align-items: baseline; }
-  .ex-cell::before { content: attr(data-label); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-warm-gray); flex-shrink: 0; }
+  .ex-cell::before { content: attr(data-label); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-warm-gray); flex-shrink: 0; }
   .ex-cell.cat { justify-content: flex-start; }
   .ex-cell.cat::before { content: none; }
   .ex-cell.amt { text-align: left; }
@@ -101,6 +101,11 @@ body { background: var(--color-soft-beige); }
     <a class="hs-nav-link" href="belongo-h11-tenants.html">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="6" cy="5.5" r="2.3"/><path d="M2.3 13.5c0-2.3 1.7-3.7 3.7-3.7s3.7 1.4 3.7 3.7"/><path d="M10.5 4.2a2.2 2.2 0 0 1 0 4.3M11.2 9.9c1.6.3 2.7 1.6 2.7 3.6"/></svg>
       Tenants &amp; leases
+    </a>
+    <div class="hs-nav-sec">Programs</div>
+    <a class="hs-nav-link" href="belongo-h12-recognition.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="6" width="12" height="3" rx="1"/><path d="M3 9v5h10V9M8 6v8M8 6C6 6 5 4 6.3 3.3 7.6 2.6 8 5 8 6zM8 6c2 0 3-2 1.7-2.7C8.4 2.6 8 5 8 6z"/></svg>
+      Recognition
     </a>
   </nav>
   <div class="hs-side-foot">

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belongo — Add property (p04)</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23D4AF37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/belongo-shared.css">
+<style>
+body { background: var(--color-soft-beige); }
+/* p04 · ADD PROPERTY — single-page form; new listings go to Belongo review. */
+.ap-wrap { max-width: 780px; }
+.ap-card { background: #fff; border: 1px solid rgba(107,114,128,0.16); border-radius: var(--radius-xl); padding: var(--space-6); margin-bottom: var(--space-5); box-shadow: var(--shadow-xs); }
+.ap-card h3 { font-family: var(--font-display); font-size: var(--text-md); font-weight: 700; margin-bottom: var(--space-4); display: flex; align-items: center; gap: var(--space-3); }
+.ap-n { width: 24px; height: 24px; border-radius: 50%; background: var(--color-midnight-navy); color: var(--color-warm-ivory); font-size: var(--text-xs); display: inline-flex; align-items: center; justify-content: center; }
+.ap-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-4); }
+.ap-f { margin-bottom: var(--space-4); }
+.ap-row .ap-f { margin-bottom: 0; }
+.ap-l { display: block; font-size: var(--text-sm); font-weight: 600; margin-bottom: var(--space-2); }
+.ap-i { width: 100%; box-sizing: border-box; border: 1.5px solid rgba(107,114,128,0.3); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); font-family: var(--font-body); font-size: var(--text-sm); color: var(--color-midnight-navy); background: #fff; }
+.ap-i:focus { outline: none; border-color: var(--color-soft-gold); box-shadow: 0 0 0 3px rgba(212,175,55,0.15); }
+textarea.ap-i { min-height: 96px; resize: vertical; line-height: 1.6; }
+.ap-photos { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--space-3); }
+.ap-ph { aspect-ratio: 4/3; border-radius: var(--radius-lg); object-fit: cover; width: 100%; }
+.ap-add { aspect-ratio: 4/3; border: 2px dashed rgba(107,114,128,0.4); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; text-align: center; font-size: var(--text-xs); color: var(--color-warm-gray); padding: var(--space-2); }
+.ap-note { font-size: var(--text-xs); color: var(--color-warm-gray); margin-top: var(--space-3); line-height: 1.6; }
+.ap-review { background: var(--color-soft-gold-pale); border: 1px solid rgba(212,175,55,0.45); border-radius: var(--radius-lg); padding: var(--space-4); font-size: var(--text-sm); color: var(--color-gold-deep); margin-bottom: var(--space-5); line-height: 1.6; }
+@media (max-width: 640px) { .ap-row { grid-template-columns: minmax(0,1fr); } .ap-photos { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+</style>
+</head>
+<body>
+<aside class="hs-sidebar" id="hs-sidebar">
+  <div class="hs-side-logo">
+    <img src="assets/brand/belongo-logo-ondark.svg" alt="Belongo">
+    <span class="tag badge badge-premium">PARTNER</span>
+  </div>
+  <div class="hs-switch">
+    <button class="hs-switch-btn" type="button" data-switcher aria-haspopup="true" aria-expanded="false">
+      <span class="hs-switch-ava globe" style="background:var(--color-deep-slate);color:var(--color-soft-gold)">AD</span>
+      <span class="hs-switch-meta"><b>Abu Dhabi</b><span>Your region · 9 listings</span></span>
+      <span class="hs-switch-caret">▾</span>
+    </button>
+    <div class="hs-switch-menu" id="hs-switch-menu">
+      <div class="hs-switch-item is-active">Abu Dhabi, UAE <span class="dot"></span></div>
+      <div class="hs-switch-item" style="color:rgba(247,246,242,0.7);cursor:default">Other regions are not assigned to you</div>
+    </div>
+  </div>
+  <nav class="hs-nav">
+    <a class="hs-nav-link" href="belongo-p02-partner-dashboard.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a class="hs-nav-link is-active" href="belongo-p03-partner-listings.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 14V6.2L8 2l5.5 4.2V14z"/><path d="M6.3 14V9.3h3.4V14"/></svg>
+      Listings
+    </a>
+    <a class="hs-nav-link" href="belongo-p05-pricing-availability.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"/></svg>
+      Pricing &amp; availability
+    </a>
+    <a class="hs-nav-link" href="belongo-p06-partner-bookings.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 9.5l1.3 1.3 2.7-2.8"/></svg>
+      Bookings
+    </a>
+    <div class="hs-nav-sec">Earnings &amp; support</div>
+    <a class="hs-nav-link" href="belongo-p07-commissions.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><path d="M8 4.5v7M6 6.3c0-.8.9-1.3 2-1.3s2 .5 2 1.3-.9 1.1-2 1.4-2 .6-2 1.4.9 1.3 2 1.3 2-.5 2-1.3"/></svg>
+      Commissions
+    </a>
+    <a class="hs-nav-link" href="belongo-p08-partner-messages.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 3h11v7.5h-6L4.5 13v-2.5h-2z"/></svg>
+      Messages <span class="nl-badge">2</span>
+    </a>
+  </nav>
+  <div class="hs-side-foot">
+    <a class="hs-nav-link" href="https://noushweb.github.io/belongo-client-prototype/belongo-g15-contact.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><path d="M6.2 6.2a1.9 1.9 0 1 1 2.6 2.4c-.5.4-.8.6-.8 1.2"/><circle cx="8" cy="11.6" r="0.5" fill="currentColor" stroke="none"/></svg>
+      Help &amp; support
+    </a>
+    <a class="hs-account" href="belongo-p08-partner-messages.html">
+      <span class="hs-account-ava">NF</span>
+      <span class="hs-account-meta"><b>Nadia Farouk</b><span>Local Curator · Approved</span></span>
+      <span class="out">⇲</span>
+    </a>
+  </div>
+</aside>
+<div class="hs-overlay" data-close-sidebar></div>
+
+<div class="hs-main">
+  <header class="hs-topbar">
+    <button class="hs-burger" type="button" data-toggle-sidebar aria-label="Open menu"><span></span><span></span><span></span></button>
+    <div class="hs-title">
+      <h1>Add property</h1>
+      <p>Abu Dhabi · new listing</p>
+    </div>
+    <div class="hs-top-actions">
+      <button class="hs-bell" type="button" aria-label="Notifications">🔔<span class="dot"></span></button>
+      <a class="btn btn-secondary btn-sm" href="belongo-p03-partner-listings.html">Cancel</a>
+    </div>
+  </header>
+
+  <main class="hs-content">
+<div class="ap-wrap">
+<div class="ap-review"><b>New listings are checked by Belongo before they go live.</b> At Trusted Curator level you will be able to publish directly.</div>
+<div class="ap-card"><h3><span class="ap-n">1</span>The property</h3>
+  <div class="ap-f"><label class="ap-l" for="ap-name">Listing name</label><input class="ap-i" id="ap-name" type="text" placeholder="e.g. Al Bateen Marina View"></div>
+  <div class="ap-row"><div class="ap-f"><label class="ap-l" for="ap-type">Type</label><select class="ap-i" id="ap-type"><option>Entire apartment</option><option>Entire villa</option><option>Studio</option><option>Private room</option></select></div><div class="ap-f"><label class="ap-l" for="ap-area">Area in Abu Dhabi</label><input class="ap-i" id="ap-area" type="text" placeholder="e.g. Al Bateen"></div></div>
+  <div class="ap-row"><div class="ap-f"><label class="ap-l" for="ap-g">Guests</label><input class="ap-i" id="ap-g" type="text" value="2"></div><div class="ap-f"><label class="ap-l" for="ap-p">Base price per night (AED)</label><input class="ap-i" id="ap-p" type="text" placeholder="460"></div></div>
+</div>
+<div class="ap-card"><h3><span class="ap-n">2</span>Photos &amp; description</h3>
+  <div class="ap-photos"><img class="ap-ph" src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=400&q=80" alt="Living room"><img class="ap-ph" src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=400&q=80" alt="Lounge"><img class="ap-ph" src="https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=400&q=80" alt="Balcony view"><div class="ap-add">+ Add photos<br>(at least 10)</div></div>
+  <div class="ap-f" style="margin-top:var(--space-4)"><label class="ap-l" for="ap-d">Description</label><textarea class="ap-i" id="ap-d" placeholder="What makes this stay worth booking? Mention prayer facilities, transport and what is nearby."></textarea></div>
+</div>
+<div class="ap-card"><h3><span class="ap-n">3</span>Verify the property</h3>
+  <div class="ap-row"><div class="ap-f"><label class="ap-l" for="ap-o">Owner or host name</label><input class="ap-i" id="ap-o" type="text" placeholder="Who owns or runs this property?"></div><div class="ap-f"><label class="ap-l" for="ap-c">Owner contact</label><input class="ap-i" id="ap-c" type="text" placeholder="Phone or email"></div></div>
+  <p class="ap-note">You confirm you have visited the property and that the details are accurate. Belongo may ask for proof of ownership or a permit number.</p>
+</div>
+<div style="display:flex;gap:var(--space-3);flex-wrap:wrap"><a class="btn btn-premium btn-md" href="belongo-p03-partner-listings.html">Submit for review</a><a class="btn btn-secondary btn-md" href="belongo-p03-partner-listings.html">Save as draft</a></div>
+</div>
+  </main>
+</div>
+
+<script src="assets/belongo-shared.js" defer></script>
+<script>
+(function () {
+  var sb = document.getElementById('hs-sidebar');
+  var ov = document.querySelector('.hs-overlay');
+  function close() { sb.classList.remove('is-open'); ov.classList.remove('is-on'); }
+  document.querySelectorAll('[data-toggle-sidebar]').forEach(function (b) {
+    b.addEventListener('click', function () { sb.classList.toggle('is-open'); ov.classList.toggle('is-on'); });
+  });
+  document.querySelectorAll('[data-close-sidebar]').forEach(function (b) { b.addEventListener('click', close); });
+  var sw = document.querySelector('[data-switcher]');
+  var menu = document.getElementById('hs-switch-menu');
+  if (sw && menu) {
+    sw.addEventListener('click', function (e) { e.stopPropagation(); var on = menu.classList.toggle('is-on'); sw.setAttribute('aria-expanded', on ? 'true' : 'false'); });
+    document.addEventListener('click', function () { menu.classList.remove('is-on'); sw.setAttribute('aria-expanded', 'false'); });
+  }
+})();
+</script>
+</body>
+</html>
