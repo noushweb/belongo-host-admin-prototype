@@ -110,19 +110,19 @@ textarea.ap-i { min-height: 96px; resize: vertical; line-height: 1.6; }
 <div class="ap-wrap">
 <div class="ap-review"><b>New listings are checked by Belongo before they go live.</b> At Trusted Curator level you will be able to publish directly.</div>
 <div class="ap-card"><h3><span class="ap-n">1</span>The property</h3>
-  <div class="ap-f"><label class="ap-l" for="ap-name">Listing name</label><input class="ap-i" id="ap-name" type="text" placeholder="e.g. Al Bateen Marina View"></div>
-  <div class="ap-row"><div class="ap-f"><label class="ap-l" for="ap-type">Type</label><select class="ap-i" id="ap-type"><option>Entire apartment</option><option>Entire villa</option><option>Studio</option><option>Private room</option></select></div><div class="ap-f"><label class="ap-l" for="ap-area">Area in Abu Dhabi</label><input class="ap-i" id="ap-area" type="text" placeholder="e.g. Al Bateen"></div></div>
-  <div class="ap-row"><div class="ap-f"><label class="ap-l" for="ap-g">Guests</label><input class="ap-i" id="ap-g" type="text" value="2"></div><div class="ap-f"><label class="ap-l" for="ap-p">Base price per night (AED)</label><input class="ap-i" id="ap-p" type="text" placeholder="460"></div></div>
+  <div class="ap-f"><label class="ap-l" for="ap-name">Listing name</label><input class="ap-i" id="ap-name" type="text" data-req="Give the listing a name" placeholder="e.g. Al Bateen Marina View"></div>
+  <div class="ap-row"><div class="ap-f"><label class="ap-l" for="ap-type">Type</label><select class="ap-i" id="ap-type"><option>Entire apartment</option><option>Entire villa</option><option>Studio</option><option>Private room</option></select></div><div class="ap-f"><label class="ap-l" for="ap-area">Area in Abu Dhabi</label><input class="ap-i" id="ap-area" type="text" data-req="Enter the area" placeholder="e.g. Al Bateen"></div></div>
+  <div class="ap-row"><div class="ap-f"><label class="ap-l" for="ap-g">Guests</label><input class="ap-i" id="ap-g" type="text" value="2"></div><div class="ap-f"><label class="ap-l" for="ap-p">Base price per night (AED)</label><input class="ap-i" id="ap-p" type="text" data-req="Enter the price per night" data-type="number" placeholder="460"></div></div>
 </div>
 <div class="ap-card"><h3><span class="ap-n">2</span>Photos &amp; description</h3>
-  <div class="ap-photos"><img class="ap-ph" src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=400&q=80" alt="Living room"><img class="ap-ph" src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=400&q=80" alt="Lounge"><img class="ap-ph" src="https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=400&q=80" alt="Balcony view"><div class="ap-add">+ Add photos<br>(at least 10)</div></div>
+  <div class="ap-photos"><img class="ap-ph" src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=400&q=80" alt="Living room"><img class="ap-ph" src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=400&q=80" alt="Lounge"><img class="ap-ph" src="https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=400&q=80" alt="Balcony view"><label class="ap-add"><input type="file" accept=".jpg,.jpeg,.png,.webp" multiple data-upload="photos" hidden>+ Add photos<br>(at least 10)</label></div>
   <div class="ap-f" style="margin-top:var(--space-4)"><label class="ap-l" for="ap-d">Description</label><textarea class="ap-i" id="ap-d" placeholder="What makes this stay worth booking? Mention prayer facilities, transport and what is nearby."></textarea></div>
 </div>
 <div class="ap-card"><h3><span class="ap-n">3</span>Verify the property</h3>
   <div class="ap-row"><div class="ap-f"><label class="ap-l" for="ap-o">Owner or host name</label><input class="ap-i" id="ap-o" type="text" placeholder="Who owns or runs this property?"></div><div class="ap-f"><label class="ap-l" for="ap-c">Owner contact</label><input class="ap-i" id="ap-c" type="text" placeholder="Phone or email"></div></div>
   <p class="ap-note">You confirm you have visited the property and that the details are accurate. Belongo may ask for proof of ownership or a permit number.</p>
 </div>
-<div style="display:flex;gap:var(--space-3);flex-wrap:wrap"><a class="btn btn-premium btn-md" href="belongo-p03-partner-listings.html">Submit for review</a><a class="btn btn-secondary btn-md" href="belongo-p03-partner-listings.html">Save as draft</a></div>
+<div style="display:flex;gap:var(--space-3);flex-wrap:wrap"><a class="btn btn-premium btn-md" href="#">Submit for review</a><a class="btn btn-secondary btn-md" href="#">Save as draft</a></div>
 </div>
   </main>
 </div>

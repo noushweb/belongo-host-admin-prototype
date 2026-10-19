@@ -202,13 +202,17 @@ var HELP = {
   var PID = m[1];
   function norm(s) { return (s || "").replace(/[＋↧⇩✎✓◍▾→✦+]/g, "").replace(/\s+/g, " ").trim().toLowerCase(); }
   var toastEl, toastTimer;
-  function toast(msg) {
+  function toast(msg, o) {
+    o = o || {};
     if (!toastEl) { toastEl = document.createElement("div"); toastEl.className = "bt-toast"; toastEl.setAttribute("role", "status"); document.body.appendChild(toastEl); }
-    toastEl.innerHTML = '<span class="bt-tick">&#10003;</span><span></span>';
-    toastEl.lastChild.textContent = msg;
+    toastEl.innerHTML = '<span class="bt-tick' + (o.error ? " is-err" : "") + '">' + (o.error ? "!" : "&#10003;") + '</span><span class="bt-msg"></span>' + (o.action ? '<button type="button" class="bt-act">' + o.action + "</button>" : "");
+    toastEl.querySelector(".bt-msg").textContent = msg;
+    toastEl.classList.toggle("is-error", !!o.error);
+    if (o.action) { toastEl.querySelector(".bt-act").onclick = function () { toastEl.classList.remove("is-on"); if (o.fn) o.fn(); }; }
     toastEl.classList.add("is-on"); clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { toastEl.classList.remove("is-on"); }, 4200);
+    toastTimer = setTimeout(function () { toastEl.classList.remove("is-on"); }, o.action ? 8000 : 4200);
   }
+  window.BT = window.BT || {}; window.BT.toast = toast;
   /* ---- slide-in form ---- */
   var dr, drBack;
   function closeDrawer() { if (dr) { dr.classList.remove("is-on"); drBack.classList.remove("is-on"); } }
@@ -221,15 +225,19 @@ var HELP = {
     }
     var f = cfg.fields.map(function (x, i) {
       var id = "bt-f" + i, lab = '<label class="bt-l" for="' + id + '">' + x.l + "</label>";
-      if (x.t === "select") return '<div class="bt-f">' + lab + '<select class="bt-i" id="' + id + '">' + x.o.map(function (o) { return "<option>" + o + "</option>"; }).join("") + "</select></div>";
-      if (x.t === "area") return '<div class="bt-f">' + lab + '<textarea class="bt-i" id="' + id + '" rows="5">' + (x.v || "") + "</textarea></div>";
-      return '<div class="bt-f">' + lab + '<input class="bt-i" id="' + id + '" type="' + (x.t || "text") + '" value="' + (x.v || "") + '" placeholder="' + (x.p || "") + '"></div>';
+      var rq = (x.r ? ' data-req="' + x.r + '"' : "") + (x.dt ? ' data-type="' + x.dt + '"' : "");
+      if (x.t === "select") return '<div class="bt-f">' + lab + '<select class="bt-i" id="' + id + '"' + rq + '>' + x.o.map(function (o) { return "<option>" + o + "</option>"; }).join("") + "</select></div>";
+      if (x.t === "area") return '<div class="bt-f">' + lab + '<textarea class="bt-i" id="' + id + '" rows="5"' + rq + '>' + (x.v || "") + "</textarea></div>";
+      return '<div class="bt-f">' + lab + '<input class="bt-i" id="' + id + '" type="' + (x.t || "text") + '"' + rq + ' value="' + (x.v || "") + '" placeholder="' + (x.p || "") + '"></div>';
     }).join("");
     dr.innerHTML = '<div class="bt-head"><h2>' + cfg.title + '</h2><button type="button" class="bt-x" aria-label="Close">&times;</button></div>' + (cfg.lead ? '<p class="bt-lead">' + cfg.lead + "</p>" : "") + '<div class="bt-body">' + f + '</div><div class="bt-foot"><button type="button" class="btn btn-secondary btn-md bt-cancel">Cancel</button><button type="button" class="btn btn-premium btn-md bt-go">' + cfg.go + "</button></div>";
     dr.querySelector(".bt-x").onclick = closeDrawer; dr.querySelector(".bt-cancel").onclick = closeDrawer;
     dr.querySelector(".bt-go").onclick = function () {
+      if (!window.BT.validate(dr)) return;
       var vals = [].map.call(dr.querySelectorAll(".bt-i"), function (e) { return e.value; });
-      closeDrawer(); toast(typeof cfg.done === "function" ? cfg.done(vals) : cfg.done); if (onDone) onDone(vals);
+      window.BT.busy(this, "Saving\u2026", function () {
+        closeDrawer(); toast(typeof cfg.done === "function" ? cfg.done(vals) : cfg.done, cfg.undo ? { action: "Undo", fn: cfg.undo } : null); if (onDone) onDone(vals);
+      });
     };
     dr.classList.add("is-on"); drBack.classList.add("is-on");
     var first = dr.querySelector(".bt-i"); if (first) setTimeout(function () { first.focus(); }, 60);
@@ -238,19 +246,19 @@ var HELP = {
   var COUNTRIES = ["United Arab Emirates", "Saudi Arabia", "Qatar", "Oman", "Bahrain", "Kuwait"];
   var LEVELS = ["Verified", "Ambassador", "Elite"];
   var DRAWERS = {
-    "a04|invite user": { title: "Invite a team member", lead: "They get an email to set up their account.", go: "Send invite", fields: [{ l: "Email", p: "name@belongo.co" }, { l: "Role", t: "select", o: ROLES }, { l: "Scope", t: "select", o: ["All countries"].concat(COUNTRIES) }], done: function (v) { return "Invite sent to " + (v[0] || "the new team member") + " as " + v[1] + "."; } },
-    "a05|add expense": { title: "Add an expense", lead: "Larger amounts wait for approval.", go: "Submit expense", fields: [{ l: "Category", t: "select", o: ["Payment processing", "Cloud and tools", "Support staff", "Marketing", "Legal and compliance"] }, { l: "Amount (AED)", p: "0.00" }, { l: "Note", p: "What is this for?" }], done: "Expense submitted for approval." },
+    "a04|invite user": { title: "Invite a team member", lead: "They get an email to set up their account.", go: "Send invite", fields: [{ l: "Email", p: "name@belongo.co", r: "Enter the person's email", dt: "email" }, { l: "Role", t: "select", o: ROLES }, { l: "Scope", t: "select", o: ["All countries"].concat(COUNTRIES) }], done: function (v) { return "Invite sent to " + (v[0] || "the new team member") + " as " + v[1] + "."; } },
+    "a05|add expense": { title: "Add an expense", lead: "Larger amounts wait for approval.", go: "Submit expense", fields: [{ l: "Category", t: "select", o: ["Payment processing", "Cloud and tools", "Support staff", "Marketing", "Legal and compliance"] }, { l: "Amount (AED)", p: "0.00", r: "Enter an amount", dt: "number" }, { l: "Note", p: "What is this for?" }], done: "Expense submitted for approval." },
     "a06|generate report": { title: "Generate a report", lead: "It appears in the export queue when ready.", go: "Generate", fields: [{ l: "Report", t: "select", o: ["Financial summary", "Occupancy and RevPAR", "Partner commissions", "Recognition grants"] }, { l: "Period", t: "select", o: ["September 2026", "Q3 2026", "Last 6 months", "Year to date"] }, { l: "Format", t: "select", o: ["PDF", "Excel"] }], done: "Report queued. You will find it in the export queue below." },
-    "a07|invite partner": { title: "Invite a partner", lead: "They receive a link to the application.", go: "Send invitation", fields: [{ l: "Name" }, { l: "Email", p: "name@example.com" }, { l: "Region", t: "select", o: ["Sharjah, UAE", "Riyadh, Saudi Arabia", "Doha, Qatar", "Muscat, Oman", "Manama, Bahrain"] }], done: function (v) { return "Invitation sent to " + (v[0] || "the partner") + "."; } },
+    "a07|invite partner": { title: "Invite a partner", lead: "They receive a link to the application.", go: "Send invitation", fields: [{ l: "Name", r: "Enter the partner's name" }, { l: "Email", p: "name@example.com", r: "Enter their email", dt: "email" }, { l: "Region", t: "select", o: ["Sharjah, UAE", "Riyadh, Saudi Arabia", "Doha, Qatar", "Muscat, Oman", "Manama, Bahrain"] }], done: function (v) { return "Invitation sent to " + (v[0] || "the partner") + "."; } },
     "a08|edit level rules": { title: "Edit Trusted Curator rules", lead: "Applies to partners who have not yet reached the level.", go: "Save rules", fields: [{ l: "Minimum quality score", v: "95" }, { l: "Minimum live listings", v: "10" }, { l: "Minimum months active", v: "6" }], done: "Level rules saved." },
-    "a09|grant recognition": { title: "Grant recognition", lead: "Levels are earned. Add the reason for the record.", go: "Grant level", fields: [{ l: "Guest", p: "Search by name or email" }, { l: "Level", t: "select", o: LEVELS }, { l: "Reason", t: "area", v: "" }], done: function (v) { return (v[0] || "The guest") + " is now " + v[1] + "."; } },
+    "a09|grant recognition": { title: "Grant recognition", lead: "Levels are earned. Add the reason for the record.", go: "Grant level", fields: [{ l: "Guest", p: "Search by name or email", r: "Choose a guest" }, { l: "Level", t: "select", o: LEVELS }, { l: "Reason", t: "area", v: "" }], done: function (v) { return (v[0] || "The guest") + " is now " + v[1] + "."; } },
     "h05|block dates": { title: "Block dates", lead: "Guests cannot book blocked dates.", go: "Block dates", fields: [{ l: "Unit", t: "select", o: ["Downtown Calm Studio", "Marina Skyline 2-Bed", "Bur Dubai Souq Loft", "JBR Beachfront 2-Bed"] }, { l: "From", t: "date", v: "2026-09-25" }, { l: "To", t: "date", v: "2026-09-27" }, { l: "Reason", p: "Owner stay, maintenance" }], done: "Dates blocked. They are removed from search." },
-    "h09|add expense": { title: "Add an expense", lead: "It feeds your profit and loss report.", go: "Save expense", fields: [{ l: "Property", t: "select", o: ["All properties", "Downtown Calm Studio", "Marina Skyline 2-Bed", "Bur Dubai Souq Loft", "JBR Beachfront 2-Bed"] }, { l: "Category", t: "select", o: ["Cleaning", "Repairs", "Utilities", "Supplies"] }, { l: "Amount (AED)", p: "0.00" }], done: "Expense saved." },
-    "h11|add lease": { title: "Add a lease", lead: "You get a reminder before it ends.", go: "Save lease", fields: [{ l: "Tenant name" }, { l: "Unit", t: "select", o: ["Marina Skyline 2-Bed", "Bur Dubai Souq Loft"] }, { l: "Monthly rent (AED)", p: "0" }, { l: "Start date", t: "date", v: "2026-10-01" }], done: "Lease saved. A renewal reminder is set." },
+    "h09|add expense": { title: "Add an expense", lead: "It feeds your profit and loss report.", go: "Save expense", fields: [{ l: "Property", t: "select", o: ["All properties", "Downtown Calm Studio", "Marina Skyline 2-Bed", "Bur Dubai Souq Loft", "JBR Beachfront 2-Bed"] }, { l: "Category", t: "select", o: ["Cleaning", "Repairs", "Utilities", "Supplies"] }, { l: "Amount (AED)", p: "0.00", r: "Enter an amount", dt: "number" }], done: "Expense saved." },
+    "h11|add lease": { title: "Add a lease", lead: "You get a reminder before it ends.", go: "Save lease", fields: [{ l: "Tenant name", r: "Enter the tenant's name" }, { l: "Unit", t: "select", o: ["Marina Skyline 2-Bed", "Bur Dubai Souq Loft"] }, { l: "Monthly rent (AED)", p: "0", r: "Enter the monthly rent", dt: "number" }, { l: "Start date", t: "date", v: "2026-10-01" }], done: "Lease saved. A renewal reminder is set." },
     "h15|pause listing": { title: "Pause this listing", lead: "It is hidden from search. Existing bookings stay.", go: "Pause listing", fields: [{ l: "Reason", t: "select", o: ["Maintenance", "Owner stay", "Renovation", "Other"] }, { l: "Pause until", t: "date", v: "2026-10-15" }], done: "Listing paused. It no longer appears in search." },
-    "h14|message guest": { title: "Message the guest", lead: "They get it by email and in their Belongo inbox.", go: "Send message", fields: [{ l: "Your message", t: "area", v: "" }], done: function () { return "Message sent to " + (document.getElementById("bk-guest") || {}).textContent + "."; } },
+    "h14|message guest": { title: "Message the guest", lead: "They get it by email and in their Belongo inbox.", go: "Send message", fields: [{ l: "Your message", t: "area", v: "", r: "Write a message first" }], done: function () { return "Message sent to " + (document.getElementById("bk-guest") || {}).textContent + "."; } },
     "h14|cancel booking": { title: "Cancel this booking", lead: "The guest is refunded in full and told why. Belongo may charge a host cancellation fee.", go: "Cancel booking", fields: [{ l: "Reason", t: "select", o: ["Property not available", "Maintenance problem", "Double booking", "Other"] }, { l: "Note to the guest", t: "area", v: "" }], done: "Booking cancelled. The guest has been refunded in full and emailed." },
-    "h08|reply": { title: "Reply to this review", lead: "Replies are public.", go: "Post reply", fields: [{ l: "Your reply", t: "area", v: "" }], done: "Reply posted." },
+    "h08|reply": { title: "Reply to this review", lead: "Replies are public.", go: "Post reply", fields: [{ l: "Your reply", t: "area", v: "", r: "Write a reply first" }], done: "Reply posted." },
     "h08|suggest a reply": { title: "Suggested reply", lead: "Written by Belongo. Edit it before you post.", go: "Post reply", fields: [{ l: "Your reply", t: "area", v: "Thank you for staying with us and for the kind words. We are glad the studio felt calm and easy, and we would love to host you again." }], done: "Reply posted." }
   };
   var TOASTS = {
@@ -259,10 +267,11 @@ var HELP = {
     "apply update": "Prices updated for 25 to 30 Sep.", "resolve": "Conflict resolved. The calendar is back in sync.",
     "manage": "Opens two-factor setup and recovery codes.", "review": "Opens the list of signed-in devices.",
     "request resubmission": "Resubmission requested. The applicant has been emailed.",
-    "resend confirmation": "Confirmation email sent again."
+    "resend confirmation": "Confirmation email sent again.",
+    "save as draft": "Draft saved. Finish it any time from your listings."
   };
   function rowOf(el) { return el.closest(".tbl-row"); }
-  function setStatus(el, cls, text) { var cell = el.closest(".pt-act") || el.parentNode; cell.innerHTML = '<span class="badge ' + cls + '">' + text + "</span>"; }
+  function setStatus(el, cls, text) { var cell = el.closest(".pt-act") || el.parentNode, old = cell.innerHTML; cell.innerHTML = '<span class="badge ' + cls + '">' + text + "</span>"; return function () { cell.innerHTML = old; }; }
   document.addEventListener("click", function (e) {
     var el = e.target.closest("a[href='#'], button");
     if (!el || el.closest(".ah-wrap, .bt-drawer, .chatbot-panel, .chatbot-fab")) return;
@@ -278,20 +287,28 @@ var HELP = {
     }
     /* row outcomes */
     if (PID === "a07" && row) {
-      if (label === "approve") { e.preventDefault(); var reg = (row.querySelector("[data-label='Region']") || {}).textContent || ""; setStatus(el, "badge-available", "Approved"); toast(name + " approved. Region assigned: " + reg + ". They have been emailed."); return; }
-      if (label === "reject") { e.preventDefault(); setStatus(el, "badge-pending", "Rejected"); toast(name + " rejected. They are told why by email."); return; }
+      if (label === "approve") { e.preventDefault(); var reg = (row.querySelector("[data-label='Region']") || {}).textContent || ""; var undoA = setStatus(el, "badge-available", "Approved"); toast(name + " approved. Region assigned: " + reg + ". They have been emailed.", { action: "Undo", fn: undoA }); return; }
+      if (label === "reject") { e.preventDefault(); var undoR; openDrawer({ title: "Reject " + name, lead: "They are told why by email.", go: "Reject application", fields: [{ l: "Reason", t: "select", o: ["ID could not be verified", "Not enough local experience", "Region already covered", "Other"] }, { l: "Note to the applicant (optional)", t: "area", v: "" }], done: name + " rejected. They are told why by email.", undo: function () { if (undoR) undoR(); } }, function () { undoR = setStatus(el, "badge-pending", "Rejected"); }); return; }
       if (label === "request resubmission") { e.preventDefault(); setStatus(el, "badge-pending", "Waiting for new photo"); toast("Resubmission requested from " + name + "."); return; }
     }
     if (PID === "a09" && row) {
-      if (label === "approve") { e.preventDefault(); var lv = (row.querySelector(".rec-badge") || {}).textContent || "the level"; setStatus(el, "badge-available", "Granted"); toast(name + " is now " + lv.replace(/[^\w ]/g, "").trim() + "."); return; }
-      if (label === "dismiss") { e.preventDefault(); setStatus(el, "badge-booked", "Dismissed"); toast("Suggestion dismissed for " + name + "."); return; }
+      if (label === "approve") { e.preventDefault(); var lv = (row.querySelector(".rec-badge") || {}).textContent || "the level"; var undoG = setStatus(el, "badge-available", "Granted"); toast(name + " is now " + lv.replace(/[^\w ]/g, "").trim() + ".", { action: "Undo", fn: undoG }); return; }
+      if (label === "dismiss") { e.preventDefault(); var undoD = setStatus(el, "badge-booked", "Dismissed"); toast("Suggestion dismissed for " + name + ".", { action: "Undo", fn: undoD }); return; }
       if (label === "change level") { e.preventDefault(); openDrawer({ title: "Change level for " + name, lead: "Levels are earned. Add the reason for the record.", go: "Save level", fields: [{ l: "New level", t: "select", o: ["Circle"].concat(LEVELS) }, { l: "Reason", t: "area", v: "" }], done: name + "'s level updated." }); return; }
     }
     if (PID === "h14" && label === "mark as checked in") { e.preventDefault(); var st = document.getElementById("bk-status"); if (st) { st.textContent = "In-house"; st.className = "badge badge-verified"; } toast("Marked as checked in."); return; }
     if (DRAWERS[key]) { e.preventDefault(); openDrawer(DRAWERS[key]); return; }
     if (PID === "p01" && label === "submit application") {
       e.preventDefault(); var body = document.querySelector(".ca-body");
+      var okF = window.BT.validate(body), idBox = document.querySelector(".ca-id");
+      if (idBox && idBox.getAttribute("data-done") !== "1") { window.BT.setError(idBox.querySelector("input") || idBox, "Upload your passport or Emirates ID"); if (okF) idBox.scrollIntoView({ block: "center" }); okF = false; }
+      if (!okF) return;
       if (body) { body.innerHTML = '<div class="ca-card" style="grid-column:1/-1;text-align:center;padding:var(--space-10) var(--space-6)"><div style="width:64px;height:64px;border-radius:50%;background:var(--color-success);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:var(--space-4)">&#10003;</div><h2 style="font-size:var(--text-xl);margin-bottom:var(--space-2)">Application received</h2><p style="color:var(--color-warm-gray);max-width:460px;margin:0 auto;line-height:1.65;font-size:var(--text-sm)">Thank you. We are checking your ID now, and a person at Belongo will review your application. You will hear from us within seven days.</p></div>'; window.scrollTo(0, 0); }
+      return;
+    }
+    if (PID === "p04" && label === "submit for review") {
+      e.preventDefault(); var scope2 = document.querySelector(".ap-wrap");
+      if (scope2 && window.BT.validate(scope2)) { window.BT.busy(el, "Submitting\u2026", function () { location.href = "belongo-p03-partner-listings.html?msg=submitted"; }); }
       return;
     }
     if (PID === "p08" && label === "send") {
@@ -300,6 +317,163 @@ var HELP = {
       else { toast("Write a message first."); }
       return;
     }
+    if (/^(save changes|save|apply update)$/.test(label) && (el.getAttribute("href") === "#" || el.tagName === "BUTTON")) {
+      e.preventDefault();
+      if (el.getAttribute("aria-disabled") === "true" && !el.classList.contains("is-busy")) { toast("There are no changes to save yet."); return; }
+      var scope = document.querySelector(".ap-wrap, .ep-wrap, .pa-wrap");
+      if (scope && !window.BT.validate(scope)) return;
+      window.BT.busy(el, "Saving\u2026", function () { toast(TOASTS[label]); if (window.BT.markClean) window.BT.markClean(); });
+      return;
+    }
     if (TOASTS[label] && (el.getAttribute("href") === "#" || el.tagName === "BUTTON")) { e.preventDefault(); toast(TOASTS[label]); }
   });
+})();
+
+/* ============================================================
+   FORM STATES (design demo): field validation, saving / failure /
+   retry, uploads, unsaved changes, empty and no-results states.
+   Add ?fail=1 to any page URL to see the failure + retry state,
+   and ?empty=1 on list pages to see the empty state.
+   ============================================================ */
+(function () {
+  "use strict";
+  var BT = window.BT = window.BT || {};
+  var Q = new URLSearchParams(location.search);
+  BT.fail = Q.get("fail") === "1";
+  if (!BT.toast) {
+    var te, tt;
+    BT.toast = function (msg, o) {
+      o = o || {};
+      if (!te) { te = document.createElement("div"); te.className = "bt-toast"; te.setAttribute("role", "status"); document.body.appendChild(te); }
+      te.innerHTML = '<span class="bt-tick' + (o.error ? " is-err" : "") + '">' + (o.error ? "!" : "&#10003;") + '</span><span class="bt-msg"></span>' + (o.action ? '<button type="button" class="bt-act">' + o.action + "</button>" : "");
+      te.querySelector(".bt-msg").textContent = msg; te.classList.toggle("is-error", !!o.error);
+      if (o.action) te.querySelector(".bt-act").onclick = function () { te.classList.remove("is-on"); if (o.fn) o.fn(); };
+      te.classList.add("is-on"); clearTimeout(tt); tt = setTimeout(function () { te.classList.remove("is-on"); }, o.action ? 8000 : 4200);
+    };
+  }
+  /* ---- validation ---- */
+  BT.setError = function (el, msg) {
+    var wrap = el.closest(".au-pw") || el, nx = wrap.nextElementSibling;
+    if (nx && nx.classList.contains("bt-err")) nx.remove();
+    el.removeAttribute("aria-invalid"); el.classList.remove("bt-bad");
+    if (!msg) return;
+    el.setAttribute("aria-invalid", "true"); el.classList.add("bt-bad");
+    var s = document.createElement("span"); s.className = "bt-err"; s.setAttribute("role", "alert"); s.textContent = msg;
+    wrap.parentNode.insertBefore(s, wrap.nextSibling);
+    if (!el._bt) { el._bt = 1; el.addEventListener("input", function () { BT.setError(el, null); }); el.addEventListener("change", function () { BT.setError(el, null); }); }
+  };
+  BT.validate = function (root) {
+    var first = null;
+    root.querySelectorAll("[data-req]").forEach(function (el) {
+      if (el.offsetParent === null && !el.closest(".ep-pane")) return;
+      var v = (el.value || "").trim(), dt = el.getAttribute("data-type"), msg = null;
+      if (!v) msg = el.getAttribute("data-req") || "This field is required";
+      else if (dt === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) msg = "Enter a valid email address";
+      else if (dt === "number" && !(parseFloat(v.replace(/,/g, "")) > 0)) msg = "Enter an amount greater than 0";
+      else if (dt === "pw8" && v.length < 8) msg = "Use at least 8 characters";
+      else if (dt === "card" && v.replace(/\D/g, "").length < 13) msg = "Enter the full card number";
+      BT.setError(el, msg); if (msg && !first) first = el;
+    });
+    if (first) {
+      var pane = first.closest(".ep-pane");
+      if (pane && pane.hidden) { var tab = document.querySelector('.ep-tab[data-pane="' + pane.getAttribute("data-pane") + '"]'); if (tab) tab.click(); }
+      first.focus(); if (first.scrollIntoView) first.scrollIntoView({ block: "center" });
+    }
+    return !first;
+  };
+  /* ---- busy / failure / retry ---- */
+  BT.busy = function (btn, label, work) {
+    if (btn.getAttribute("aria-disabled") === "true" && btn.classList.contains("is-busy")) return;
+    var orig = btn.innerHTML, was = btn.getAttribute("aria-disabled");
+    btn.setAttribute("aria-disabled", "true"); btn.classList.add("is-busy"); btn.innerHTML = label;
+    setTimeout(function () {
+      btn.classList.remove("is-busy"); btn.innerHTML = orig; if (was) btn.setAttribute("aria-disabled", was); else btn.removeAttribute("aria-disabled");
+      if (BT.fail) { BT.fail = false; BT.toast("Could not complete that. Nothing was lost. Check your connection and try again.", { error: true, action: "Retry", fn: function () { BT.busy(btn, label, work); } }); }
+      else { work(); }
+    }, 800);
+  };
+  /* ---- unsaved changes ---- */
+  var saveBtn = null, chip = null, dirty = false;
+  function setDirty(on) {
+    dirty = on; if (!saveBtn) return;
+    if (on) saveBtn.removeAttribute("aria-disabled"); else saveBtn.setAttribute("aria-disabled", "true");
+    saveBtn.classList.toggle("is-off", !on); chip.hidden = !on;
+    window.onbeforeunload = on ? function (e) { e.preventDefault(); e.returnValue = ""; return ""; } : null;
+  }
+  BT.markClean = function () { setDirty(false); };
+  function initDirty() {
+    var bar = document.querySelector(".hs-top-actions"); if (!bar) return;
+    saveBtn = [].find.call(bar.querySelectorAll("a.btn"), function (a) { return /^save/i.test(a.textContent.replace(/[✓\s]+/g, " ").trim()); });
+    if (!saveBtn) return;
+    chip = document.createElement("span"); chip.className = "bt-dirty"; chip.textContent = "Unsaved changes"; chip.hidden = true; saveBtn.parentNode.insertBefore(chip, saveBtn);
+    setDirty(false);
+    var main = document.querySelector(".hs-content");
+    ["input", "change"].forEach(function (ev) { main.addEventListener(ev, function (e) { if (e.target.closest(".st-v, .bt-drawer, .pm-send, .rg-sel, .rg-switch, .tbl")) return; if (e.target.matches("input, select, textarea")) setDirty(true); }); });
+  }
+  /* ---- uploads ---- */
+  var OK = /\.(jpe?g|png|webp)$/i, MAX = 10 * 1024 * 1024;
+  function size(n) { return n > 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB"; }
+  function progress(bar, done) { var i = 0, t = setInterval(function () { i += 20; bar.style.width = Math.min(i, 100) + "%"; if (i >= 100) { clearInterval(t); done(); } }, 140); }
+  function initUploads() {
+    document.querySelectorAll("input[data-upload]").forEach(function (inp) {
+      inp.addEventListener("change", function () {
+        var kind = inp.getAttribute("data-upload"), host = inp.closest("label") || inp.parentNode;
+        [].forEach.call(inp.files, function (file) {
+          var bad = null;
+          if (kind === "doc" ? !/\.(jpe?g|png|pdf)$/i.test(file.name) : !OK.test(file.name)) bad = file.name + " is not supported. Use " + (kind === "doc" ? "JPG, PNG or PDF." : "JPG, PNG or WebP.");
+          else if (file.size > MAX) bad = file.name + " is over 10 MB. Choose a smaller file.";
+          if (bad) { BT.toast(bad, { error: true }); if (kind === "doc") BT.setError(inp, bad); return; }
+          if (kind === "doc") {
+            BT.setError(inp, null); host.setAttribute("data-done", "0");
+            host.querySelector(".bt-doc") && host.querySelector(".bt-doc").remove();
+            var d = document.createElement("span"); d.className = "bt-doc"; d.innerHTML = '<b></b><span class="bt-prog"><i></i></span><em>Uploading…</em>';
+            d.querySelector("b").textContent = file.name + " · " + size(file.size); host.appendChild(d);
+            progress(d.querySelector("i"), function () {
+              if (BT.fail) { d.querySelector("em").textContent = "Upload failed."; d.querySelector("em").className = "bt-bad-txt"; var r = document.createElement("button"); r.type = "button"; r.className = "bt-link"; r.textContent = "Retry"; r.onclick = function (ev) { ev.preventDefault(); ev.stopPropagation(); BT.fail = false; inp.dispatchEvent(new Event("change")); }; d.appendChild(r); return; }
+              host.setAttribute("data-done", "1"); d.querySelector(".bt-prog").remove(); d.querySelector("em").textContent = "Uploaded";
+              var x = document.createElement("button"); x.type = "button"; x.className = "bt-link"; x.textContent = "Remove"; x.onclick = function (ev) { ev.preventDefault(); ev.stopPropagation(); d.remove(); host.setAttribute("data-done", "0"); inp.value = ""; }; d.appendChild(x);
+            });
+          } else {
+            var th = document.createElement("div"); th.className = "bt-thumb";
+            var im = document.createElement("img"); im.alt = file.name; im.src = URL.createObjectURL(file);
+            th.appendChild(im); th.innerHTML += '<button type="button" class="bt-x2" aria-label="Remove ' + file.name.replace(/"/g, "") + '">&times;</button><span class="bt-prog"><i></i></span>';
+            host.parentNode.insertBefore(th, host);
+            progress(th.querySelector("i"), function () { th.querySelector(".bt-prog").remove(); });
+            th.querySelector(".bt-x2").onclick = function () { var nx = th.nextSibling; var par = th.parentNode; par.removeChild(th); BT.toast("Photo removed.", { action: "Undo", fn: function () { par.insertBefore(th, nx); } }); };
+          }
+        });
+        if (kind === "photos") inp.value = "";
+      });
+    });
+  }
+  /* ---- empty states ---- */
+  BT.empty = function (el, title, text, cta, href) {
+    var d = document.createElement("div"); d.className = "bt-empty";
+    d.innerHTML = '<div class="bt-empty-ic" aria-hidden="true">&#9675;</div><h3></h3><p></p>' + (cta ? '<a class="btn btn-secondary btn-md" href="' + href + '"></a>' : "");
+    d.querySelector("h3").textContent = title; d.querySelector("p").textContent = text; if (cta) d.querySelector("a").textContent = cta;
+    el.parentNode.replaceChild(d, el); return d;
+  };
+  var EMPTY = {
+    g21: [".sv-grid", "Nothing saved yet", "Tap the heart on any stay to keep it here for later.", "Find stays", "belongo-g03-search-results.html"],
+    p03: [".pl-grid", "No listings yet", "Add your first property. Belongo checks it before it goes live.", "Add property", "belongo-p04-add-property.html"],
+    a07: [".pt-q", "No open applications", "New Local Curator applications appear here for review.", null],
+    a09: [".rg-t2", "No suggestions this week", "Guests who meet an automatic rule appear here for you to approve.", null]
+  };
+  function initEmpty() {
+    var m = location.pathname.match(/belongo-([ghap]\d\d)-/), c = m && EMPTY[m[1]];
+    if (c && Q.get("empty") === "1") { var t = document.querySelector(c[0]); if (t) { if (m[1] === "a07" || m[1] === "a09") { var hd = t.previousElementSibling; } BT.empty(t, c[1], c[2], c[3], c[4]); } }
+    var s = document.querySelector('input[type="search"]'), rows = document.querySelectorAll(".bk-row.r");
+    if (s && rows.length) {
+      var tableHost = rows[0].parentNode, note = null;
+      s.addEventListener("input", function () {
+        var q = s.value.trim().toLowerCase(), shown = 0;
+        rows.forEach(function (r) { var hit = !q || r.textContent.toLowerCase().indexOf(q) > -1; r.style.display = hit ? "" : "none"; if (hit) shown++; });
+        if (note) { note.remove(); note = null; }
+        if (!shown) { note = document.createElement("div"); note.className = "bt-empty"; note.innerHTML = '<div class="bt-empty-ic" aria-hidden="true">&#9675;</div><h3>No bookings match</h3><p></p><button type="button" class="btn btn-secondary btn-md">Clear search</button>'; note.querySelector("p").textContent = "Nothing matches “" + s.value.trim() + "”. Check the spelling, or try a guest name, property or reference."; note.querySelector("button").onclick = function () { s.value = ""; s.dispatchEvent(new Event("input")); s.focus(); }; tableHost.appendChild(note); }
+      });
+    }
+    if (Q.get("msg") === "submitted") BT.toast("Listing submitted. Belongo reviews it, usually within 24 hours.");
+  }
+  function boot() { initDirty(); initUploads(); initEmpty(); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();

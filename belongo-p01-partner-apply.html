@@ -51,13 +51,13 @@ textarea.ca-i { min-height: 96px; resize: vertical; line-height: 1.6; }
 <div class="ca-body">
 <div>
   <div class="ca-card"><h2>Your application</h2>
-    <div class="ca-row"><div class="ca-f"><label class="ca-l" for="ca-n">Full name</label><input class="ca-i" id="ca-n" type="text" placeholder="Hamad Al Suwaidi"></div><div class="ca-f"><label class="ca-l" for="ca-e">Email</label><input class="ca-i" id="ca-e" type="email" placeholder="hamad@example.com"></div></div>
-    <div class="ca-row"><div class="ca-f"><label class="ca-l" for="ca-p">Mobile</label><input class="ca-i" id="ca-p" type="text" placeholder="+971 50 000 0000"></div><div class="ca-f"><label class="ca-l" for="ca-r">City or region you know best</label><input class="ca-i" id="ca-r" type="text" placeholder="e.g. Sharjah, UAE"></div></div>
+    <div class="ca-row"><div class="ca-f"><label class="ca-l" for="ca-n">Full name</label><input class="ca-i" id="ca-n" type="text" data-req="Enter your full name" placeholder="Hamad Al Suwaidi"></div><div class="ca-f"><label class="ca-l" for="ca-e">Email</label><input class="ca-i" id="ca-e" type="email" data-req="Enter your email" data-type="email" placeholder="hamad@example.com"></div></div>
+    <div class="ca-row"><div class="ca-f"><label class="ca-l" for="ca-p">Mobile</label><input class="ca-i" id="ca-p" type="text" data-req="Enter your mobile number" placeholder="+971 50 000 0000"></div><div class="ca-f"><label class="ca-l" for="ca-r">City or region you know best</label><input class="ca-i" id="ca-r" type="text" data-req="Tell us which city you know best" placeholder="e.g. Sharjah, UAE"></div></div>
     <div class="ca-row"><div class="ca-f"><label class="ca-l" for="ca-t">Applying as</label><select class="ca-i" id="ca-t"><option>An individual</option><option>A company</option></select></div><div class="ca-f"><label class="ca-l" for="ca-c">Properties you could look after</label><select class="ca-i" id="ca-c"><option>1 – 5</option><option>6 – 15</option><option>16 or more</option></select></div></div>
     <div class="ca-f"><label class="ca-l" for="ca-w">Why you, and what do you know about local stays?</label><textarea class="ca-i" id="ca-w" placeholder="Tell us about your experience with hospitality, property or the area."></textarea></div>
   </div>
   <div class="ca-card"><h2>Verify your identity</h2>
-    <div class="ca-id"><span>&#128196;</span><span>Upload your passport or Emirates ID (front and back)</span></div>
+    <label class="ca-id" data-done="0"><input type="file" accept=".jpg,.jpeg,.png,.pdf" data-upload="doc" hidden><span>&#128196;</span><span>Upload your passport or Emirates ID (JPG, PNG or PDF, up to 10 MB)</span></label>
     <p class="ca-note">Your documents are used only to confirm who you are and are stored securely.</p>
   </div>
   <a class="btn btn-premium btn-lg" href="#">Submit application</a>
