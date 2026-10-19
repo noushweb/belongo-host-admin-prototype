@@ -1621,3 +1621,16 @@ textarea.bt-i { resize: vertical; line-height: 1.6; }
 .bt-doc em { font-style: normal; font-size: var(--text-xs); color: var(--color-warm-gray); }
 .bt-bad-txt { color: var(--color-error) !important; font-weight: 600; }
 .bt-link { align-self: flex-start; background: none; border: none; padding: 0; font-family: var(--font-body); font-size: var(--text-xs); font-weight: 700; color: var(--color-midnight-navy); border-bottom: 1px solid var(--color-soft-gold); cursor: pointer; }
+
+/* ---- guest session + trip ---- */
+.site-user { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(107,114,128,0.25); border-radius: 999px; padding: 4px 12px 4px 4px; background: #fff; font-size: var(--text-sm); font-weight: 600; color: var(--color-midnight-navy); }
+.site-user .av { width: 30px; height: 30px; border-radius: 50%; background: var(--color-midnight-navy); color: var(--color-warm-ivory); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+.site-user:hover { border-color: var(--color-soft-gold); }
+@media (max-width: 560px) { .site-user .nm { display: none; } .site-user { padding: 4px; } }
+body.is-out .rec-line, body.is-out .pd-rec { display: none !important; }
+.bt-note { background: var(--color-soft-beige); border: 1px dashed rgba(107,114,128,0.4); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); font-size: var(--text-xs); color: var(--color-deep-slate); line-height: 1.55; margin-bottom: var(--space-4); }
+.bt-soft { background: var(--color-soft-gold-pale); border: 1px solid rgba(212,175,55,0.4); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); font-size: var(--text-sm); color: var(--color-gold-deep); font-weight: 600; margin-bottom: var(--space-4); line-height: 1.5; }
+.bt-soft a { text-decoration: underline; }
+.site-nav-link, .site-nav-ai, .site-host-link, .site-user { white-space: nowrap; }
+@media (max-width: 1360px) { .site-user .nm { display: none; } .site-user { padding: 4px; } }
+@media (max-width: 1240px) { .site-actions .site-host-link, .site-actions-divider { display: none; } .site-actions { gap: var(--space-2); } }

@@ -477,3 +477,108 @@ var HELP = {
   function boot() { initDirty(); initUploads(); initEmpty(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();
+
+/* ============================================================
+   GUEST SESSION + TRIP (design demo)
+   - Signed-out is the default. Signing in (g07) sets the session.
+   - Recognition perks, saved-card checkout and the account pages
+     assume a signed-in guest; signed-out visitors see the plain
+     versions and are sent to sign in for account pages.
+   - The trip (city, dates, guests) chosen on the landing page is
+     carried to search, property, checkout and confirmation.
+   Demo shortcuts: ?signed=in or ?signed=out sets the session.
+   ============================================================ */
+(function () {
+  "use strict";
+  var m = location.pathname.match(/belongo-(g\d\d)-/); if (!m) return;
+  var PID = m[1], BT = window.BT = window.BT || {};
+  var Qs = new URLSearchParams(location.search);
+  try { if (Qs.get("signed") === "in") sessionStorage.setItem("belongo.in", "1"); if (Qs.get("signed") === "out") sessionStorage.removeItem("belongo.in"); } catch (e) {}
+  BT.signedIn = function () { try { return sessionStorage.getItem("belongo.in") === "1"; } catch (e) { return false; } };
+  BT.signIn = function () { try { sessionStorage.setItem("belongo.in", "1"); } catch (e) {} };
+  BT.signOut = function () { try { sessionStorage.removeItem("belongo.in"); } catch (e) {} };
+  var ACCOUNT = { g08: 1, g09: 1, g10: 1, g11: 1, g12: 1, g13: 1, g23: 1 };
+  var inn = BT.signedIn();
+  if (ACCOUNT[PID] && !inn) { location.replace("belongo-g07-auth.html?next=" + encodeURIComponent(location.pathname.split("/").pop())); return; }
+  /* ---- trip ---- */
+  var DEF = { city: "Dubai, UAE", inD: "2026-09-12", outD: "2026-09-15", guests: "2 adults · 1 room" };
+  BT.trip = function () { try { var t = JSON.parse(sessionStorage.getItem("belongo.trip")); if (t && t.inD) return t; } catch (e) {} return DEF; };
+  var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], WD = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  function pd(s) { var a = s.split("-"); return new Date(Date.UTC(+a[0], +a[1] - 1, +a[2])); }
+  function dm(d) { return d.getUTCDate() + " " + MON[d.getUTCMonth()]; }
+  function shift(d, n) { return new Date(d.getTime() + n * 86400000); }
+  function f0(n) { return Math.round(n).toLocaleString("en-US"); }
+  function f2(n) { return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  var T = BT.trip(), isDef = T.inD === DEF.inD && T.outD === DEF.outD && T.guests === DEF.guests;
+  var I = pd(T.inD), O = pd(T.outD), N = Math.max(1, Math.round((O - I) / 86400000));
+  var total = 268 * N + 148, sub = 268 * N, dep = Math.round(total * 0.25), bal = total - dep, factor = total / 952;
+  BT.totals = { total: total, dep: dep };
+  var guestsA = T.guests.split(" · ")[0];
+  function rng(sp) { var same = I.getUTCMonth() === O.getUTCMonth(); return same ? I.getUTCDate() + (sp ? " – " : "–") + O.getUTCDate() + " " + MON[I.getUTCMonth()] : dm(I) + (sp ? " – " : "–") + dm(O); }
+  var nightsTxt = N + (N === 1 ? " night" : " nights");
+  var cancelD = shift(I, -2), balD = shift(I, -7);
+  var RULES = [
+    [/AED 268 × 3 nights/, function () { return "AED 268 × " + nightsTxt; }],
+    [/AED 804\.00/, function () { return "AED " + f2(sub); }],
+    [/AED 952\.00/, function () { return "AED " + f2(total); }],
+    [/AED 952/, function () { return "AED " + f0(total); }],
+    [/AED 238/, function () { return "AED " + f0(dep); }],
+    [/AED 714/, function () { return "AED " + f0(bal); }],
+    [/AED 1,134/, function () { return "AED " + f0(total / 0.84); }],
+    [/AED 956/, function () { return "AED " + f0(sub / 0.84); }],
+    [/12 – 15 Sep/, function () { return rng(true); }],
+    [/12–15 Sep/, function () { return rng(false); }],
+    [/Sat, 12 Sep/, function () { return WD[I.getUTCDay()] + ", " + dm(I); }],
+    [/Tue, 15 Sep/, function () { return WD[O.getUTCDay()] + ", " + dm(O); }],
+    [/Sep 10(?=, 18:00)/, function () { return MON[cancelD.getUTCMonth()] + " " + cancelD.getUTCDate(); }],
+    [/3 nights/, function () { return nightsTxt; }],
+    [/2 adults · 1 room/, function () { return T.guests; }],
+    [/2 adults/, function () { return guestsA; }],
+    [/\b5 Sep\b/, function () { return dm(balD); }],
+    [/\b10 Sep\b/, function () { return dm(cancelD); }],
+    [/see you in Dubai/, function () { return "see you in " + T.city.split(",")[0]; }]
+  ];
+  var BIG = new RegExp(RULES.map(function (r) { return "(" + r[0].source + ")"; }).join("|"), "g");
+  function applyTrip(root) {
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), nodes = [], n;
+    while ((n = w.nextNode())) { var p = n.parentNode; if (p && /^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName)) continue; nodes.push(n); }
+    nodes.forEach(function (node) {
+      var t = node.nodeValue; if (!/AED|nights|adults|Sep|Dubai/.test(t)) return;
+      var out = t.replace(BIG, function () { var args = arguments; for (var i = 0; i < RULES.length; i++) { if (args[i + 1] !== undefined) return RULES[i][1](); } return args[0]; });
+      if (out !== t) node.nodeValue = out;
+    });
+  }
+  var TRIP_PAGES = { g04: 1, g05: 1, g06: 1 };
+  if (TRIP_PAGES[PID] && !isDef) document.addEventListener("DOMContentLoaded", function () { applyTrip(document.body); });
+  if (PID === "g03") document.addEventListener("DOMContentLoaded", function () {
+    var city = Qs.get("where") || T.city;
+    if (!isDef) {
+      document.querySelectorAll(".sr-seg b").forEach(function (b, i) { var t = b.textContent; if (i === 1) b.textContent = rng(false); else if (i === 2) b.textContent = T.guests; });
+      document.querySelectorAll(".sr-total, .deal-was").forEach(function (e) { e.textContent = e.textContent.replace(/AED ([\d,]+)/, function (x, v) { return "AED " + f0(parseInt(v.replace(/,/g, ""), 10) * factor); }); });
+      document.querySelectorAll(".sr-total-note, .sr-sub, .sr-meta").forEach(function (e) { e.textContent = e.textContent.replace(/3 nights/, nightsTxt); });
+      var main = document.querySelector(".sr-card"); if (main) { document.querySelectorAll(".sr-total-note").forEach(function (e) { e.textContent = e.textContent.replace(/\d+ nights?/, nightsTxt); }); }
+    }
+    if (!/^Dubai/i.test(city)) {
+      var first = document.querySelector(".sr-card"); if (first && first.parentNode) { var nt = document.createElement("div"); nt.className = "bt-note"; nt.innerHTML = "<b>Prototype note:</b> every city shows the same sample stays from Dubai. In the real product, results follow the search."; first.parentNode.insertBefore(nt, first); }
+    }
+  });
+  /* ---- signed-in / signed-out presentation ---- */
+  document.addEventListener("DOMContentLoaded", function () {
+    document.body.classList.add(inn ? "is-in" : "is-out");
+    if (inn) {
+      document.querySelectorAll('.site-actions a.btn[href*="g07-auth"]').forEach(function (a) {
+        var u = document.createElement("a"); u.className = "site-user"; u.href = "belongo-g08-my-bookings.html"; u.innerHTML = '<span class="av">MN</span><span class="nm">Mariam</span>'; a.parentNode.replaceChild(u, a);
+      });
+      document.querySelectorAll('.site-mobile-actions a.btn[href*="g07-auth"]').forEach(function (a) { a.textContent = "My bookings"; a.setAttribute("href", "belongo-g08-my-bookings.html"); });
+      var cta = document.querySelector('a[href*="g07-auth.html?from=booking"]'); if (cta) { cta.textContent = "Go to my bookings"; cta.setAttribute("href", "belongo-g08-my-bookings.html"); }
+    } else {
+      document.querySelectorAll(".sr-chip").forEach(function (c) { if (/Ambassador benefits/.test(c.textContent)) c.style.display = "none"; });
+    }
+    document.querySelectorAll(".acct-signout a").forEach(function (a) { a.addEventListener("click", function () { BT.signOut(); }); });
+    if (PID === "g05" && !inn) {
+      var wanted = { "First name": 1, "Last name": 1, "Email": 1, "Mobile": 1, "Name on card": 1 };
+      document.querySelectorAll(".co-field").forEach(function (f) { var l = f.querySelector(".co-label"), i = f.querySelector("input"); if (!l || !i) return; var key = l.textContent.trim().replace(/ —.*$/, "").replace(/ \(.*$/, ""); if (wanted[key]) { i.value = ""; if (key === "Email") i.placeholder = "you@example.com"; } });
+      var sec = document.querySelector(".co-sec"); if (sec) { var b = document.createElement("div"); b.className = "bt-soft"; b.innerHTML = 'Booking as a guest. <a href="belongo-g07-auth.html?next=belongo-g05-checkout.html">Sign in</a> for faster checkout and member benefits.'; sec.parentNode.insertBefore(b, sec); }
+    }
+  });
+})();
