@@ -127,6 +127,24 @@ textarea.ap-i { min-height: 96px; resize: vertical; line-height: 1.6; }
   </main>
 </div>
 
+<script>
+(function () {
+  var q = new URLSearchParams(location.search); if (!q.get('edit')) return;
+  var st = q.get('status') || 'Live';
+  document.querySelector('.hs-title h1').textContent = 'Edit property';
+  document.querySelector('.hs-title p').textContent = 'Abu Dhabi · ' + q.get('name');
+  document.getElementById('ap-name').value = q.get('name'); document.getElementById('ap-area').value = q.get('area'); document.getElementById('ap-p').value = (q.get('price') || '').replace(/,/g, '');
+  var box = document.querySelector('.ap-review'), btns = document.querySelectorAll('.ap-wrap > div:last-child a.btn');
+  var msg = {
+    'Live': '<b>This listing is live.</b> Changes are checked by Belongo before they show. At Trusted Curator level your changes publish directly.',
+    'In review': '<b>Belongo is checking this listing.</b> You can still edit it. The review restarts when you save.',
+    'Draft': '<b>This listing is a draft.</b> Finish the details and submit it for Belongo to review.'
+  }[st] || '';
+  if (box && msg) box.innerHTML = msg;
+  if (st === 'Draft') { btns[0].textContent = 'Submit for review'; }
+  else { btns[0].textContent = 'Save changes'; btns[0].setAttribute('href', '#'); btns[1].textContent = 'Back to listings'; btns[1].setAttribute('href', 'belongo-p03-partner-listings.html'); }
+})();
+</script>
 <script src="assets/belongo-shared.js" defer></script>
 <script>
 (function () {

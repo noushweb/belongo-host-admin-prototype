@@ -129,7 +129,7 @@ var HELP = {
  h01:[["How much does hosting cost?","A flat commission from 12% of each booking, all in. No listing fees."],["How do I start?","Press Start listing and follow the six short steps."],["Who pays me and when?","Belongo pays out 48 hours after the guest checks in."]],
  h02:[["What do the cards show?","Occupancy, revenue and today's arrivals for your properties."],["How do I switch property?","Use the property switcher at the top of the sidebar."],["What needs my attention?","The tasks list shows messages and bookings that are waiting for you."]],
  h03:[["Is my progress saved?","Yes. It saves automatically and you can leave and return."],["How long does it take?","About ten minutes for a first listing."],["What happens when I finish?","Belongo reviews the listing, then it goes live."]],
- h04:[["How do I confirm a booking?","Open it and press Accept. Instant-book stays confirm by themselves."],["What do the statuses mean?","Pending is waiting for you, Confirmed is booked, Completed has been stayed."],["How do I contact a guest?","Open the booking and use Message guest."]],
+ h04:[["Do I need to confirm bookings?","No. Bookings confirm by themselves. Open one to message the guest or mark them checked in."],["What do the statuses mean?","Pending is waiting for you, Confirmed is booked, Completed has been stayed."],["How do I contact a guest?","Open the booking and use Message guest."]],
  h05:[["How do I block dates?","Select the dates and choose Block. Guests cannot book them."],["What is a sync conflict?","Another calendar changed the same dates. You choose which one to keep."],["Can I set different prices by day?","Yes, in Pricing."]],
  h06:[["How do I add a property?","Press Add property and follow the steps."],["What is listing completeness?","A score for how complete each listing is. Higher scores rank better."],["How do I pause a listing?","Open it and choose Pause."]],
  h07:[["What is smart pricing?","Belongo adjusts your nightly rate within your range by demand and local events."],["Can I set my own rules?","Yes. Weekend, season, last-minute and length-of-stay rules are all optional."],["Where do I allow deposits?","Part-payment is controlled per listing. Guests only see it when you allow it."]],
@@ -137,6 +137,8 @@ var HELP = {
  h09:[["What can I record here?","Running costs such as cleaning, repairs and utilities."],["Can I attach receipts?","Yes, add a photo or file to each expense."],["Do expenses affect my payout?","No. They feed your profit and loss report."]],
  h10:[["How is profit calculated?","Revenue minus Belongo commission and your recorded expenses."],["Can I download this?","Yes, as PDF or Excel from the Export button."],["When are payouts sent?","48 hours after each guest checks in."]],
  h11:[["What are leases?","Long-stay tenants with a contract, dates and rent."],["How do renewals work?","You get a reminder before each lease ends."],["Can guests and tenants mix?","Yes. They are tracked separately."]],
+ h15:[["Do changes go live straight away?","Yes for most details. New photos are checked by Belongo first."],["How do I stop bookings for a while?","Press Pause listing at the bottom. Existing bookings stay."],["Where do I change my price?","Open the Pricing and rules tab, or use the Pricing page for rules by date."]],
+ h14:[["What can I do with a booking?","Message the guest, mark them checked in, resend their confirmation, or cancel."],["When do I get paid?","48 hours after the guest checks in."],["What is not in my payout?","The guest service fee and tourism tax. Belongo collects those."]],
  h12:[["What is the recognition programme?","A free way to welcome trusted guests and offer them perks you choose."],["Do I have to take part?","No. It is optional and you can leave anytime."],["What do I get?","Higher placement for recognised guests and a Preferred Host badge."]],
  h13:[["Where do payouts go?","To the bank account listed under Payouts."],["How do I change my password?","Open Security and press Change."],["Can I get fewer emails?","Yes. Switch off any alert under Notifications."]],
  a01:[["What does Gross merchandise value mean?","The total value of bookings made, before commission is taken."],["How do I filter by country?","Use the country switcher at the top of the sidebar."],["Can I export these numbers?","Yes, from Reports."]],
@@ -245,6 +247,9 @@ var HELP = {
     "h05|block dates": { title: "Block dates", lead: "Guests cannot book blocked dates.", go: "Block dates", fields: [{ l: "Unit", t: "select", o: ["Downtown Calm Studio", "Marina Skyline 2-Bed", "Bur Dubai Souq Loft", "JBR Beachfront 2-Bed"] }, { l: "From", t: "date", v: "2026-09-25" }, { l: "To", t: "date", v: "2026-09-27" }, { l: "Reason", p: "Owner stay, maintenance" }], done: "Dates blocked. They are removed from search." },
     "h09|add expense": { title: "Add an expense", lead: "It feeds your profit and loss report.", go: "Save expense", fields: [{ l: "Property", t: "select", o: ["All properties", "Downtown Calm Studio", "Marina Skyline 2-Bed", "Bur Dubai Souq Loft", "JBR Beachfront 2-Bed"] }, { l: "Category", t: "select", o: ["Cleaning", "Repairs", "Utilities", "Supplies"] }, { l: "Amount (AED)", p: "0.00" }], done: "Expense saved." },
     "h11|add lease": { title: "Add a lease", lead: "You get a reminder before it ends.", go: "Save lease", fields: [{ l: "Tenant name" }, { l: "Unit", t: "select", o: ["Marina Skyline 2-Bed", "Bur Dubai Souq Loft"] }, { l: "Monthly rent (AED)", p: "0" }, { l: "Start date", t: "date", v: "2026-10-01" }], done: "Lease saved. A renewal reminder is set." },
+    "h15|pause listing": { title: "Pause this listing", lead: "It is hidden from search. Existing bookings stay.", go: "Pause listing", fields: [{ l: "Reason", t: "select", o: ["Maintenance", "Owner stay", "Renovation", "Other"] }, { l: "Pause until", t: "date", v: "2026-10-15" }], done: "Listing paused. It no longer appears in search." },
+    "h14|message guest": { title: "Message the guest", lead: "They get it by email and in their Belongo inbox.", go: "Send message", fields: [{ l: "Your message", t: "area", v: "" }], done: function () { return "Message sent to " + (document.getElementById("bk-guest") || {}).textContent + "."; } },
+    "h14|cancel booking": { title: "Cancel this booking", lead: "The guest is refunded in full and told why. Belongo may charge a host cancellation fee.", go: "Cancel booking", fields: [{ l: "Reason", t: "select", o: ["Property not available", "Maintenance problem", "Double booking", "Other"] }, { l: "Note to the guest", t: "area", v: "" }], done: "Booking cancelled. The guest has been refunded in full and emailed." },
     "h08|reply": { title: "Reply to this review", lead: "Replies are public.", go: "Post reply", fields: [{ l: "Your reply", t: "area", v: "" }], done: "Reply posted." },
     "h08|suggest a reply": { title: "Suggested reply", lead: "Written by Belongo. Edit it before you post.", go: "Post reply", fields: [{ l: "Your reply", t: "area", v: "Thank you for staying with us and for the kind words. We are glad the studio felt calm and easy, and we would love to host you again." }], done: "Reply posted." }
   };
@@ -253,7 +258,8 @@ var HELP = {
     "export": "Export started. We will email it when it is ready.", "download statement": "Your statement is downloading.",
     "apply update": "Prices updated for 25 to 30 Sep.", "resolve": "Conflict resolved. The calendar is back in sync.",
     "manage": "Opens two-factor setup and recovery codes.", "review": "Opens the list of signed-in devices.",
-    "request resubmission": "Resubmission requested. The applicant has been emailed."
+    "request resubmission": "Resubmission requested. The applicant has been emailed.",
+    "resend confirmation": "Confirmation email sent again."
   };
   function rowOf(el) { return el.closest(".tbl-row"); }
   function setStatus(el, cls, text) { var cell = el.closest(".pt-act") || el.parentNode; cell.innerHTML = '<span class="badge ' + cls + '">' + text + "</span>"; }
@@ -281,6 +287,7 @@ var HELP = {
       if (label === "dismiss") { e.preventDefault(); setStatus(el, "badge-booked", "Dismissed"); toast("Suggestion dismissed for " + name + "."); return; }
       if (label === "change level") { e.preventDefault(); openDrawer({ title: "Change level for " + name, lead: "Levels are earned. Add the reason for the record.", go: "Save level", fields: [{ l: "New level", t: "select", o: ["Circle"].concat(LEVELS) }, { l: "Reason", t: "area", v: "" }], done: name + "'s level updated." }); return; }
     }
+    if (PID === "h14" && label === "mark as checked in") { e.preventDefault(); var st = document.getElementById("bk-status"); if (st) { st.textContent = "In-house"; st.className = "badge badge-verified"; } toast("Marked as checked in."); return; }
     if (DRAWERS[key]) { e.preventDefault(); openDrawer(DRAWERS[key]); return; }
     if (PID === "p01" && label === "submit application") {
       e.preventDefault(); var body = document.querySelector(".ca-body");
