@@ -187,3 +187,112 @@ var HELP = {
   document.addEventListener("click", function () { show(false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") show(false); });
 })();
+
+/* ============================================================
+   APP ACTIONS (design demo): every action button in the host,
+   admin and partner screens shows an outcome: a confirmation
+   toast, a slide-in form, an inline status, or inline editing.
+   ============================================================ */
+(function () {
+  "use strict";
+  var m = location.pathname.match(/belongo-([hap]\d\d)-/);
+  if (!m) return;
+  var PID = m[1];
+  function norm(s) { return (s || "").replace(/[＋↧⇩✎✓◍▾→✦+]/g, "").replace(/\s+/g, " ").trim().toLowerCase(); }
+  var toastEl, toastTimer;
+  function toast(msg) {
+    if (!toastEl) { toastEl = document.createElement("div"); toastEl.className = "bt-toast"; toastEl.setAttribute("role", "status"); document.body.appendChild(toastEl); }
+    toastEl.innerHTML = '<span class="bt-tick">&#10003;</span><span></span>';
+    toastEl.lastChild.textContent = msg;
+    toastEl.classList.add("is-on"); clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove("is-on"); }, 4200);
+  }
+  /* ---- slide-in form ---- */
+  var dr, drBack;
+  function closeDrawer() { if (dr) { dr.classList.remove("is-on"); drBack.classList.remove("is-on"); } }
+  function openDrawer(cfg, onDone) {
+    if (!dr) {
+      drBack = document.createElement("div"); drBack.className = "bt-back"; drBack.addEventListener("click", closeDrawer);
+      dr = document.createElement("aside"); dr.className = "bt-drawer"; dr.setAttribute("role", "dialog"); dr.setAttribute("aria-modal", "true");
+      document.body.appendChild(drBack); document.body.appendChild(dr);
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeDrawer(); });
+    }
+    var f = cfg.fields.map(function (x, i) {
+      var id = "bt-f" + i, lab = '<label class="bt-l" for="' + id + '">' + x.l + "</label>";
+      if (x.t === "select") return '<div class="bt-f">' + lab + '<select class="bt-i" id="' + id + '">' + x.o.map(function (o) { return "<option>" + o + "</option>"; }).join("") + "</select></div>";
+      if (x.t === "area") return '<div class="bt-f">' + lab + '<textarea class="bt-i" id="' + id + '" rows="5">' + (x.v || "") + "</textarea></div>";
+      return '<div class="bt-f">' + lab + '<input class="bt-i" id="' + id + '" type="' + (x.t || "text") + '" value="' + (x.v || "") + '" placeholder="' + (x.p || "") + '"></div>';
+    }).join("");
+    dr.innerHTML = '<div class="bt-head"><h2>' + cfg.title + '</h2><button type="button" class="bt-x" aria-label="Close">&times;</button></div>' + (cfg.lead ? '<p class="bt-lead">' + cfg.lead + "</p>" : "") + '<div class="bt-body">' + f + '</div><div class="bt-foot"><button type="button" class="btn btn-secondary btn-md bt-cancel">Cancel</button><button type="button" class="btn btn-premium btn-md bt-go">' + cfg.go + "</button></div>";
+    dr.querySelector(".bt-x").onclick = closeDrawer; dr.querySelector(".bt-cancel").onclick = closeDrawer;
+    dr.querySelector(".bt-go").onclick = function () {
+      var vals = [].map.call(dr.querySelectorAll(".bt-i"), function (e) { return e.value; });
+      closeDrawer(); toast(typeof cfg.done === "function" ? cfg.done(vals) : cfg.done); if (onDone) onDone(vals);
+    };
+    dr.classList.add("is-on"); drBack.classList.add("is-on");
+    var first = dr.querySelector(".bt-i"); if (first) setTimeout(function () { first.focus(); }, 60);
+  }
+  var ROLES = ["Super admin", "Country manager", "Finance", "Support", "Analyst"];
+  var COUNTRIES = ["United Arab Emirates", "Saudi Arabia", "Qatar", "Oman", "Bahrain", "Kuwait"];
+  var LEVELS = ["Verified", "Ambassador", "Elite"];
+  var DRAWERS = {
+    "a04|invite user": { title: "Invite a team member", lead: "They get an email to set up their account.", go: "Send invite", fields: [{ l: "Email", p: "name@belongo.co" }, { l: "Role", t: "select", o: ROLES }, { l: "Scope", t: "select", o: ["All countries"].concat(COUNTRIES) }], done: function (v) { return "Invite sent to " + (v[0] || "the new team member") + " as " + v[1] + "."; } },
+    "a05|add expense": { title: "Add an expense", lead: "Larger amounts wait for approval.", go: "Submit expense", fields: [{ l: "Category", t: "select", o: ["Payment processing", "Cloud and tools", "Support staff", "Marketing", "Legal and compliance"] }, { l: "Amount (AED)", p: "0.00" }, { l: "Note", p: "What is this for?" }], done: "Expense submitted for approval." },
+    "a06|generate report": { title: "Generate a report", lead: "It appears in the export queue when ready.", go: "Generate", fields: [{ l: "Report", t: "select", o: ["Financial summary", "Occupancy and RevPAR", "Partner commissions", "Recognition grants"] }, { l: "Period", t: "select", o: ["September 2026", "Q3 2026", "Last 6 months", "Year to date"] }, { l: "Format", t: "select", o: ["PDF", "Excel"] }], done: "Report queued. You will find it in the export queue below." },
+    "a07|invite partner": { title: "Invite a partner", lead: "They receive a link to the application.", go: "Send invitation", fields: [{ l: "Name" }, { l: "Email", p: "name@example.com" }, { l: "Region", t: "select", o: ["Sharjah, UAE", "Riyadh, Saudi Arabia", "Doha, Qatar", "Muscat, Oman", "Manama, Bahrain"] }], done: function (v) { return "Invitation sent to " + (v[0] || "the partner") + "."; } },
+    "a08|edit level rules": { title: "Edit Trusted Curator rules", lead: "Applies to partners who have not yet reached the level.", go: "Save rules", fields: [{ l: "Minimum quality score", v: "95" }, { l: "Minimum live listings", v: "10" }, { l: "Minimum months active", v: "6" }], done: "Level rules saved." },
+    "a09|grant recognition": { title: "Grant recognition", lead: "Levels are earned. Add the reason for the record.", go: "Grant level", fields: [{ l: "Guest", p: "Search by name or email" }, { l: "Level", t: "select", o: LEVELS }, { l: "Reason", t: "area", v: "" }], done: function (v) { return (v[0] || "The guest") + " is now " + v[1] + "."; } },
+    "h05|block dates": { title: "Block dates", lead: "Guests cannot book blocked dates.", go: "Block dates", fields: [{ l: "Unit", t: "select", o: ["Downtown Calm Studio", "Marina Skyline 2-Bed", "Bur Dubai Souq Loft", "JBR Beachfront 2-Bed"] }, { l: "From", t: "date", v: "2026-09-25" }, { l: "To", t: "date", v: "2026-09-27" }, { l: "Reason", p: "Owner stay, maintenance" }], done: "Dates blocked. They are removed from search." },
+    "h09|add expense": { title: "Add an expense", lead: "It feeds your profit and loss report.", go: "Save expense", fields: [{ l: "Property", t: "select", o: ["All properties", "Downtown Calm Studio", "Marina Skyline 2-Bed", "Bur Dubai Souq Loft", "JBR Beachfront 2-Bed"] }, { l: "Category", t: "select", o: ["Cleaning", "Repairs", "Utilities", "Supplies"] }, { l: "Amount (AED)", p: "0.00" }], done: "Expense saved." },
+    "h11|add lease": { title: "Add a lease", lead: "You get a reminder before it ends.", go: "Save lease", fields: [{ l: "Tenant name" }, { l: "Unit", t: "select", o: ["Marina Skyline 2-Bed", "Bur Dubai Souq Loft"] }, { l: "Monthly rent (AED)", p: "0" }, { l: "Start date", t: "date", v: "2026-10-01" }], done: "Lease saved. A renewal reminder is set." },
+    "h08|reply": { title: "Reply to this review", lead: "Replies are public.", go: "Post reply", fields: [{ l: "Your reply", t: "area", v: "" }], done: "Reply posted." },
+    "h08|suggest a reply": { title: "Suggested reply", lead: "Written by Belongo. Edit it before you post.", go: "Post reply", fields: [{ l: "Your reply", t: "area", v: "Thank you for staying with us and for the kind words. We are glad the studio felt calm and easy, and we would love to host you again." }], done: "Reply posted." }
+  };
+  var TOASTS = {
+    "save changes": "Changes saved.", "save": "Saved.",
+    "export": "Export started. We will email it when it is ready.", "download statement": "Your statement is downloading.",
+    "apply update": "Prices updated for 25 to 30 Sep.", "resolve": "Conflict resolved. The calendar is back in sync.",
+    "manage": "Opens two-factor setup and recovery codes.", "review": "Opens the list of signed-in devices.",
+    "request resubmission": "Resubmission requested. The applicant has been emailed."
+  };
+  function rowOf(el) { return el.closest(".tbl-row"); }
+  function setStatus(el, cls, text) { var cell = el.closest(".pt-act") || el.parentNode; cell.innerHTML = '<span class="badge ' + cls + '">' + text + "</span>"; }
+  document.addEventListener("click", function (e) {
+    var el = e.target.closest("a[href='#'], button");
+    if (!el || el.closest(".ah-wrap, .bt-drawer, .chatbot-panel, .chatbot-fab")) return;
+    if (el.hasAttribute("data-toggle") || el.hasAttribute("data-toggle-sidebar") || el.hasAttribute("data-switcher") || el.hasAttribute("data-show") || el.hasAttribute("data-toggle-overlay") || el.classList.contains("hs-bell") || el.classList.contains("hs-burger")) return;
+    var label = norm(el.textContent), key = PID + "|" + label;
+    var row = rowOf(el), name = row && row.querySelector(".tbl-name b") ? row.querySelector(".tbl-name b").textContent : "";
+    /* inline edit in settings */
+    if (el.classList.contains("st-edit") && (label === "change" || el.dataset.editing)) {
+      e.preventDefault(); var v = el.parentNode.querySelector(".st-v");
+      if (el.dataset.editing) { var inp = v.querySelector("input"); v.textContent = inp.value || inp.defaultValue; el.textContent = "Change"; delete el.dataset.editing; toast("Saved."); }
+      else { var cur = v.textContent.trim(); v.innerHTML = '<input class="bt-i" type="text" value="' + cur.replace(/"/g, "&quot;") + '" aria-label="New value">'; el.textContent = "Save"; el.dataset.editing = "1"; v.querySelector("input").focus(); }
+      return;
+    }
+    /* row outcomes */
+    if (PID === "a07" && row) {
+      if (label === "approve") { e.preventDefault(); var reg = (row.querySelector("[data-label='Region']") || {}).textContent || ""; setStatus(el, "badge-available", "Approved"); toast(name + " approved. Region assigned: " + reg + ". They have been emailed."); return; }
+      if (label === "reject") { e.preventDefault(); setStatus(el, "badge-pending", "Rejected"); toast(name + " rejected. They are told why by email."); return; }
+      if (label === "request resubmission") { e.preventDefault(); setStatus(el, "badge-pending", "Waiting for new photo"); toast("Resubmission requested from " + name + "."); return; }
+    }
+    if (PID === "a09" && row) {
+      if (label === "approve") { e.preventDefault(); var lv = (row.querySelector(".rec-badge") || {}).textContent || "the level"; setStatus(el, "badge-available", "Granted"); toast(name + " is now " + lv.replace(/[^\w ]/g, "").trim() + "."); return; }
+      if (label === "dismiss") { e.preventDefault(); setStatus(el, "badge-booked", "Dismissed"); toast("Suggestion dismissed for " + name + "."); return; }
+      if (label === "change level") { e.preventDefault(); openDrawer({ title: "Change level for " + name, lead: "Levels are earned. Add the reason for the record.", go: "Save level", fields: [{ l: "New level", t: "select", o: ["Circle"].concat(LEVELS) }, { l: "Reason", t: "area", v: "" }], done: name + "'s level updated." }); return; }
+    }
+    if (DRAWERS[key]) { e.preventDefault(); openDrawer(DRAWERS[key]); return; }
+    if (PID === "p01" && label === "submit application") {
+      e.preventDefault(); var body = document.querySelector(".ca-body");
+      if (body) { body.innerHTML = '<div class="ca-card" style="grid-column:1/-1;text-align:center;padding:var(--space-10) var(--space-6)"><div style="width:64px;height:64px;border-radius:50%;background:var(--color-success);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:var(--space-4)">&#10003;</div><h2 style="font-size:var(--text-xl);margin-bottom:var(--space-2)">Application received</h2><p style="color:var(--color-warm-gray);max-width:460px;margin:0 auto;line-height:1.65;font-size:var(--text-sm)">Thank you. We are checking your ID now, and a person at Belongo will review your application. You will hear from us within seven days.</p></div>'; window.scrollTo(0, 0); }
+      return;
+    }
+    if (PID === "p08" && label === "send") {
+      e.preventDefault(); var inp2 = document.querySelector(".pm-send input"); var txt = inp2 && inp2.value.trim();
+      if (txt) { var b = document.createElement("div"); b.className = "pm-msg out"; b.textContent = txt; var s = document.createElement("small"); s.textContent = "You · just now"; b.appendChild(s); var send = document.querySelector(".pm-send"); send.parentNode.insertBefore(b, send); inp2.value = ""; }
+      else { toast("Write a message first."); }
+      return;
+    }
+    if (TOASTS[label] && (el.getAttribute("href") === "#" || el.tagName === "BUTTON")) { e.preventDefault(); toast(TOASTS[label]); }
+  });
+})();
