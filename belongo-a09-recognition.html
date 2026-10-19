@@ -14,7 +14,7 @@ body { background: var(--color-soft-beige); }
 /* a09 · RECOGNITION — manual grants of Circle → Verified → Ambassador → Elite. */
 .rg-kpis { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--space-4); margin-bottom: var(--space-6); }
 .rg-kpi { background: #fff; border: 1px solid rgba(107,114,128,0.16); border-radius: var(--radius-xl); padding: var(--space-5); box-shadow: var(--shadow-xs); }
-.rg-kpi > span:first-child { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-warm-gray); display: block; }
+.rg-kpi > span:first-child { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-warm-gray); display: block; }
 .rg-kpi b { display: block; font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 800; margin-top: var(--space-2); }
 .rg-kpi .rec-badge { margin-top: var(--space-3); }
 .rg-h { font-family: var(--font-display); font-size: var(--text-md); font-weight: 700; margin: var(--space-6) 0 var(--space-3); display: flex; align-items: center; gap: var(--space-3); }
@@ -24,6 +24,25 @@ body { background: var(--color-soft-beige); }
 .rg-future h3 { font-family: var(--font-display); font-size: var(--text-md); font-weight: 700; margin-bottom: var(--space-3); }
 .rg-future ul { list-style: none; display: grid; gap: var(--space-2); font-size: var(--text-sm); color: var(--color-warm-gray); }
 .rg-future li::before { content: "\25CB"; margin-right: 10px; }
+.rg-auto { background: #fff; border: 1px solid rgba(107,114,128,0.16); border-radius: var(--radius-xl); padding: var(--space-6); margin-top: var(--space-6); box-shadow: var(--shadow-xs); }
+.rg-auto-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-3); }
+.rg-auto-head h3 { font-family: var(--font-display); font-size: var(--text-md); font-weight: 700; }
+.rg-auto-head p { font-size: var(--text-sm); color: var(--color-warm-gray); margin-top: 2px; }
+.rg-mode span { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-warm-gray); margin-bottom: 4px; }
+.rg-sel { border: 1.5px solid rgba(107,114,128,0.3); border-radius: var(--radius-md); padding: var(--space-2) var(--space-3); font-family: var(--font-body); font-size: var(--text-sm); background: #fff; }
+.rg-rule { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) 0; border-top: 1px solid rgba(107,114,128,0.12); }
+.rg-rule .rec-badge { flex-shrink: 0; min-width: 118px; justify-content: center; }
+.rg-rule .d { flex: 1; font-size: var(--text-sm); color: var(--color-deep-slate); line-height: 1.55; }
+.rg-lock { font-family: var(--font-mono); font-size: 11px; color: var(--color-warm-gray); white-space: nowrap; }
+.rg-switch { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+.rg-switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 2; }
+.rg-switch .track { position: absolute; inset: 0; background: rgba(107,114,128,0.3); border-radius: var(--radius-full); transition: background var(--transition-micro); }
+.rg-switch .track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; box-shadow: var(--shadow-xs); transition: transform var(--transition-micro); }
+.rg-switch input:checked + .track { background: var(--color-midnight-navy); }
+.rg-switch input:checked + .track::after { transform: translateX(20px); background: var(--color-soft-gold); }
+.rg-t2 .tbl-row { grid-template-columns: 1.2fr 1.1fr 1.8fr 1.3fr; }
+.rg-note { font-size: var(--text-xs); color: var(--color-warm-gray); margin-top: var(--space-4); line-height: 1.6; }
+@media (max-width: 560px) { .rg-rule { flex-wrap: wrap; } }
 @media (max-width: 860px) { .rg-kpis { grid-template-columns: repeat(2, minmax(0,1fr)); } }
 </style>
 </head>
@@ -127,18 +146,18 @@ body { background: var(--color-soft-beige); }
   <div class="rg-kpi"><span>Ambassador</span><b>52</b><span class="rec-badge ambassador">&#9670; Ambassador</span></div>
   <div class="rg-kpi"><span>Elite</span><b>12</b><span class="rec-badge elite">&#9670; Elite</span></div>
 </div>
-<h2 class="rg-h">Recent grants <small>assigned by hand &middot; 31 hosts take part</small></h2>
+<h2 class="rg-h">Recent grants <small>manual or approved suggestions &middot; 31 hosts take part</small></h2>
 <div class="tbl rg-t"><div class="tbl-row tbl-head"><span class="tbl-cell">Member</span><span class="tbl-cell">Level</span><span class="tbl-cell">Granted by</span><span class="tbl-cell">Date</span><span class="tbl-cell">Action</span></div><div class="tbl-row"><span class="tbl-cell tbl-name"><b>Mariam Nasser</b><span>Frequent traveller · 8 stays</span></span><span class="tbl-cell" data-label="Level"><span class="rec-badge ambassador">&#9670; Ambassador</span></span><span class="tbl-cell" data-label="Granted by">Aisha Khoury</span><span class="tbl-cell" data-label="Date">12 May 2026</span><span class="tbl-cell" data-label="Action"><a class="btn btn-secondary btn-sm" href="#">Change level</a></span></div><div class="tbl-row"><span class="tbl-cell tbl-name"><b>Zayn Al Mansoori</b><span>Content creator (sample)</span></span><span class="tbl-cell" data-label="Level"><span class="rec-badge elite">&#9670; Elite</span></span><span class="tbl-cell" data-label="Granted by">Yusuf Demir</span><span class="tbl-cell" data-label="Date">3 Jun 2026</span><span class="tbl-cell" data-label="Action"><a class="btn btn-secondary btn-sm" href="#">Change level</a></span></div><div class="tbl-row"><span class="tbl-cell tbl-name"><b>Hana Boutros</b><span>Referrer · 9 referrals</span></span><span class="tbl-cell" data-label="Level"><span class="rec-badge ambassador">&#9670; Ambassador</span></span><span class="tbl-cell" data-label="Granted by">Aisha Khoury</span><span class="tbl-cell" data-label="Date">18 Jun 2026</span><span class="tbl-cell" data-label="Action"><a class="btn btn-secondary btn-sm" href="#">Change level</a></span></div><div class="tbl-row"><span class="tbl-cell tbl-name"><b>Ravi Menon</b><span>Excellent host reviews</span></span><span class="tbl-cell" data-label="Level"><span class="rec-badge verified">&#10003; Verified</span></span><span class="tbl-cell" data-label="Granted by">Tom Becker</span><span class="tbl-cell" data-label="Date">24 Jun 2026</span><span class="tbl-cell" data-label="Action"><a class="btn btn-secondary btn-sm" href="#">Change level</a></span></div><div class="tbl-row"><span class="tbl-cell tbl-name"><b>Studio Nour</b><span>Strategic partner (sample)</span></span><span class="tbl-cell" data-label="Level"><span class="rec-badge elite">&#9670; Elite</span></span><span class="tbl-cell" data-label="Granted by">Yusuf Demir</span><span class="tbl-cell" data-label="Date">30 Jun 2026</span><span class="tbl-cell" data-label="Action"><a class="btn btn-secondary btn-sm" href="#">Change level</a></span></div><div class="tbl-row"><span class="tbl-cell tbl-name"><b>Layla Samir</b><span>Brand ambassador (sample)</span></span><span class="tbl-cell" data-label="Level"><span class="rec-badge ambassador">&#9670; Ambassador</span></span><span class="tbl-cell" data-label="Granted by">Omar Haddad</span><span class="tbl-cell" data-label="Date">8 Jul 2026</span><span class="tbl-cell" data-label="Action"><a class="btn btn-secondary btn-sm" href="#">Change level</a></span></div></div>
-<div class="rg-future">
-  <h3>Coming later: automatic eligibility</h3>
-  <ul>
-    <li>Reputation score from host reviews</li>
-    <li>Referral achievements and marketing contribution</li>
-    <li>Booking-history scoring</li>
-    <li>AI-based trust score with automatic qualification</li>
-    <li>Exclusive events and experiences for recognised members</li>
-  </ul>
+<div class="rg-auto">
+  <div class="rg-auto-head"><div><h3>Automatic eligibility</h3><p>Belongo checks every guest against these rules and suggests who has earned a level.</p></div>
+    <label class="rg-mode"><span>Mode</span><select class="rg-sel" aria-label="Mode"><option>Suggest only &middot; staff approve</option><option>Grant automatically</option></select></label></div>
+  <div class="rg-rule"><span class="rec-badge verified">&#10003; Verified</span><span class="d">ID confirmed, 2 or more completed stays, no open disputes.</span><span class="rg-switch"><input type="checkbox" checked aria-label="Verified rule"><span class="track"></span></span></div>
+  <div class="rg-rule"><span class="rec-badge ambassador">&#9670; Ambassador</span><span class="d">Average host rating of 4.8 or more over 5 stays, or 3 successful referrals, or 3 nearby places posted.</span><span class="rg-switch"><input type="checkbox" checked aria-label="Ambassador rule"><span class="track"></span></span></div>
+  <div class="rg-rule"><span class="rec-badge elite">&#9670; Elite</span><span class="d">Always chosen by the Belongo team. Creators, public figures and strategic partners are manual only.</span><span class="rg-lock">Manual only</span></div>
 </div>
+<h2 class="rg-h">Suggested this week <small>4 guests meet a rule &middot; nothing is granted until you approve</small></h2>
+<div class="tbl rg-t2"><div class="tbl-row tbl-head"><span class="tbl-cell">Guest</span><span class="tbl-cell">Suggested level</span><span class="tbl-cell">Why</span><span class="tbl-cell">Action</span></div><div class="tbl-row"><span class="tbl-cell tbl-name"><b>Omar Said</b></span><span class="tbl-cell" data-label="Suggested"><span class="rec-badge verified">&#10003; Verified</span></span><span class="tbl-cell" data-label="Why">2 completed stays, ID confirmed</span><span class="tbl-cell" data-label="Action"><span class="pt-act"><a class="btn btn-premium btn-sm" href="#">Approve</a><a class="btn btn-secondary btn-sm" href="#">Dismiss</a></span></span></div><div class="tbl-row"><span class="tbl-cell tbl-name"><b>Priya Nair</b></span><span class="tbl-cell" data-label="Suggested"><span class="rec-badge ambassador">&#9670; Ambassador</span></span><span class="tbl-cell" data-label="Why">Average host rating 4.9 over 6 stays</span><span class="tbl-cell" data-label="Action"><span class="pt-act"><a class="btn btn-premium btn-sm" href="#">Approve</a><a class="btn btn-secondary btn-sm" href="#">Dismiss</a></span></span></div><div class="tbl-row"><span class="tbl-cell tbl-name"><b>Jonas Weber</b></span><span class="tbl-cell" data-label="Suggested"><span class="rec-badge ambassador">&#9670; Ambassador</span></span><span class="tbl-cell" data-label="Why">3 successful referrals</span><span class="tbl-cell" data-label="Action"><span class="pt-act"><a class="btn btn-premium btn-sm" href="#">Approve</a><a class="btn btn-secondary btn-sm" href="#">Dismiss</a></span></span></div><div class="tbl-row"><span class="tbl-cell tbl-name"><b>Elena Rossi</b></span><span class="tbl-cell" data-label="Suggested"><span class="rec-badge verified">&#10003; Verified</span></span><span class="tbl-cell" data-label="Why">3 completed stays, ID confirmed</span><span class="tbl-cell" data-label="Action"><span class="pt-act"><a class="btn btn-premium btn-sm" href="#">Approve</a><a class="btn btn-secondary btn-sm" href="#">Dismiss</a></span></span></div></div>
+<p class="rg-note">Later: reputation score from host reviews, referral achievements, marketing contribution, booking-history scoring, AI trust score and exclusive events for recognised members.</p>
   </main>
 </div>
 
