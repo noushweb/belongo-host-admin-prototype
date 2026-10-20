@@ -67,8 +67,8 @@ body { background: var(--color-soft-beige); }
 @media (max-width: 1100px) { .er-conn, .er-two { grid-template-columns: minmax(0,1fr); } }
 @media (max-width: 860px) { .er-diff-grid { grid-template-columns: minmax(0,1fr); } .er-form { grid-template-columns: minmax(0,1fr); } .er-diff { margin: 0 0 var(--space-3); } }
 @media (max-width: 560px) { .hs-top-actions .hs-bell, .hs-title p { display: none; } .hs-top-actions { gap: var(--space-2); } .hs-top-actions .btn { padding-left: 12px; padding-right: 12px; } }
-.er-y { display: none; }
-@media (max-width: 560px) { .er-x { display: none; } .er-y { display: inline; } }
+#er-set-btn::before { content: "Connection "; }
+@media (max-width: 560px) { #er-set-btn::before { content: none; } }
 </style>
 </head>
 <body>
@@ -161,11 +161,11 @@ body { background: var(--color-soft-beige); }
     <button class="hs-burger" type="button" data-toggle-sidebar aria-label="Open menu"><span></span><span></span><span></span></button>
     <div class="hs-title">
       <h1>ERP sync</h1>
-      <p>Invoices and payment status pulled from the client ERP · read-only</p>
+      <p>Invoices and payment status from ERPNext · read-only</p>
     </div>
     <div class="hs-top-actions">
       <button class="hs-bell" type="button" aria-label="Notifications">🔔<span class="dot"></span></button>
-      <button class="btn btn-secondary btn-sm" type="button" id="er-set-btn" aria-expanded="false" aria-controls="er-set"><span class="er-x">Connection s</span><span class="er-y">S</span>ettings</button>
+      <button class="btn btn-secondary btn-sm" type="button" id="er-set-btn" aria-expanded="false" aria-controls="er-set">Settings</button>
       <button class="btn btn-premium btn-sm" type="button" id="er-sync">Sync now</button>
     </div>
   </header>
@@ -173,12 +173,13 @@ body { background: var(--color-soft-beige); }
   <main class="hs-content">
     <section class="er-card er-set" id="er-set" hidden aria-label="Connection settings">
       <h2>Connection settings</h2>
-      <p class="er-sub">Belongo only reads from the ERP. Nothing is written back.</p>
+      <p class="er-sub">Belongo only reads from ERPNext. Nothing is written back.</p>
       <div class="er-form">
-        <div class="full"><label for="er-url">ERP API base URL</label><input class="bt-i" id="er-url" type="text" value="https://erp.client-company.com/api/v2"></div>
-        <div><label for="er-auth">Authentication</label><select class="bt-i" id="er-auth"><option>API key (read-only scope)</option><option>OAuth 2.0 client credentials</option></select></div>
+        <div class="full"><label for="er-url">ERPNext site URL</label><input class="bt-i" id="er-url" type="text" value="https://erp.client-company.com"></div>
+        <div><label for="er-auth">Authentication</label><select class="bt-i" id="er-auth"><option>API key and secret (read-only user)</option><option>OAuth 2.0</option></select></div>
         <div><label for="er-freq">Pull frequency</label><select class="bt-i" id="er-freq"><option>Every 5 minutes</option><option selected>Every 15 minutes</option><option>Every hour</option></select></div>
-        <label class="er-check full"><input type="checkbox" checked> <span>Also accept ERP webhooks, so a paid invoice shows here within seconds. The scheduled pull stays on as a safety net.</span></label>
+        <label class="er-check full"><input type="checkbox" checked> <span>Accept ERPNext webhooks, so a paid invoice shows here within seconds. The scheduled pull stays on as a safety net.</span></label>
+        <div class="full"><label for="er-sec">Webhook secret</label><input class="bt-i" id="er-sec" type="password" value="placeholder-secret" autocomplete="off"><p class="er-sub" style="margin-top:4px">Webhook URL for ERPNext: https://admin.belongo.co/hooks/erpnext. Calls without a valid signature are ignored.</p></div>
       </div>
       <div class="er-diff-acts">
         <button class="btn btn-secondary btn-sm" type="button" id="er-test">Test connection</button>
@@ -191,26 +192,26 @@ body { background: var(--color-soft-beige); }
         <div class="er-state"><span class="er-pulse" aria-hidden="true"></span><b>Connected</b><span class="badge badge-available">API healthy</span></div>
         <p class="er-sub">Last pull <b id="er-last">4 min ago</b> &middot; next pull in <span id="er-next">11 min</span> &middot; 4 invoices changed in the last pull.</p>
         <div class="er-flow" aria-label="Data flow">
-          <span class="er-node">Client ERP</span>
-          <span class="er-arrow">&rarr; API pull, read-only &rarr;</span>
+          <span class="er-node">ERPNext</span>
+          <span class="er-arrow">&rarr; webhook + API pull, read-only &rarr;</span>
           <span class="er-node">Belongo admin</span>
         </div>
-        <p class="er-sub">Paid, voided or changed invoices in the ERP update the matching payout, expense or commission here. Anything that does not match is held for review, never overwritten silently.</p>
+        <p class="er-sub">Paid, cancelled or changed invoices in ERPNext update the matching payout, expense or commission here. Anything that does not match is held for review, never overwritten silently.</p>
       </section>
       <section class="er-card" aria-label="API health">
         <h2>API health</h2>
         <div class="er-health">
           <div><span>Latency</span><b>312 ms</b></div>
           <div><span>Success, 30 days</span><b>99.8%</b></div>
-          <div><span>Access key</span><b>Valid until 14 Dec 2026</b></div>
-          <div><span>Rate limit</span><b>61 of 600 calls / hour</b></div>
+          <div><span>API key</span><b>Read-only user, no expiry</b></div>
+          <div><span>Last webhook</span><b>6 min ago, signature OK</b></div>
         </div>
       </section>
     </div>
 
     <div class="er-card er-sum" aria-label="Sync summary">
       <div class="st"><span>Synced today</span><b>128</b></div>
-      <div class="st"><span>Waiting for ERP</span><b id="er-n-wait">6</b></div>
+      <div class="st"><span>Waiting for ERPNext</span><b id="er-n-wait">6</b></div>
       <div class="st bad"><span>Mismatches</span><b id="er-n-mis">3</b></div>
       <div class="st bad"><span>Failed</span><b id="er-n-fail">1</b></div>
     </div>
@@ -218,99 +219,99 @@ body { background: var(--color-soft-beige); }
     <div class="er-tabs" role="tablist" aria-label="Filter invoices">
       <button class="er-tab is-on" type="button" role="tab" aria-selected="true" data-f="all">All</button>
       <button class="er-tab" type="button" role="tab" aria-selected="false" data-f="mis">Needs review</button>
-      <button class="er-tab" type="button" role="tab" aria-selected="false" data-f="wait">Waiting for ERP</button>
+      <button class="er-tab" type="button" role="tab" aria-selected="false" data-f="wait">Waiting for ERPNext</button>
       <button class="er-tab" type="button" role="tab" aria-selected="false" data-f="fail">Failed</button>
     </div>
 
     <div class="tbl er-tbl" id="er-tbl">
       <div class="tbl-row tbl-head">
-        <span class="tbl-cell">ERP invoice</span>
+        <span class="tbl-cell">Invoice</span>
         <span class="tbl-cell">Counterparty</span>
         <span class="tbl-cell">Where it shows</span>
         <span class="tbl-cell tbl-amt">Amount</span>
-        <span class="tbl-cell">ERP status</span>
+        <span class="tbl-cell">ERPNext status</span>
         <span class="tbl-cell">In Belongo</span>
       </div>
 
       <div class="tbl-row" data-s="mis" id="er-r1">
-        <span class="tbl-cell tbl-name" data-label="ERP invoice"><b>INV-2026-0931</b><span>Updated 6 min ago</span></span>
+        <span class="tbl-cell tbl-name" data-label="Invoice"><b>INV-2026-0931</b><span>Updated 6 min ago</span></span>
         <span class="tbl-cell" data-label="Counterparty">Influencer campaign &middot; Qatar</span>
         <span class="tbl-cell" data-label="Where it shows">Expenses</span>
         <span class="tbl-cell tbl-amt" data-label="Amount">AED 10,000</span>
-        <span class="tbl-cell" data-label="ERP status"><span class="badge badge-available">Paid 14 Sep</span></span>
+        <span class="tbl-cell" data-label="ERPNext status"><span class="badge badge-available">Paid 14 Sep</span></span>
         <span class="tbl-cell" data-label="In Belongo"><span class="badge er-warn">Pending</span> <button class="er-link" type="button" data-review="er-d1">Review</button></span>
         <div class="er-diff" id="er-d1" hidden>
-          <div class="er-diff-grid"><div><span>ERP says</span><b>Paid on 14 Sep, AED 10,000</b></div><div><span>Belongo says</span><b>Pending since 8 Sep</b></div><div><span>What changes if you accept</span><b>The expense becomes Paid and the September expenses total updates.</b></div></div>
-          <div class="er-diff-acts"><button class="btn btn-primary btn-sm" type="button" data-resolve="er-r1" data-to="Paid" data-log="INV-2026-0931 accepted from the ERP. Qatar influencer expense is now Paid.">Use the ERP value</button><button class="btn btn-secondary btn-sm" type="button" data-keep="er-r1">Keep Belongo value and tell finance</button></div>
+          <div class="er-diff-grid"><div><span>ERPNext says</span><b>Paid on 14 Sep, AED 10,000</b></div><div><span>Belongo says</span><b>Pending since 8 Sep</b></div><div><span>What changes if you accept</span><b>The expense becomes Paid and the September expenses total updates.</b></div></div>
+          <div class="er-diff-acts"><button class="btn btn-primary btn-sm" type="button" data-resolve="er-r1" data-to="Paid" data-log="INV-2026-0931 accepted from ERPNext. Qatar influencer expense is now Paid.">Use the ERPNext value</button><button class="btn btn-secondary btn-sm" type="button" data-keep="er-r1">Keep Belongo value and tell finance</button></div>
         </div>
       </div>
 
       <div class="tbl-row" data-s="mis" id="er-r2">
-        <span class="tbl-cell tbl-name" data-label="ERP invoice"><b>INV-2026-0927</b><span>Updated 1 h ago</span></span>
+        <span class="tbl-cell tbl-name" data-label="Invoice"><b>INV-2026-0927</b><span>Updated 1 h ago</span></span>
         <span class="tbl-cell" data-label="Counterparty">Nadia Farouk &middot; partner commission</span>
         <span class="tbl-cell" data-label="Where it shows">Partners</span>
         <span class="tbl-cell tbl-amt" data-label="Amount">AED 1,420</span>
-        <span class="tbl-cell" data-label="ERP status"><span class="badge badge-pending">Open</span></span>
+        <span class="tbl-cell" data-label="ERPNext status"><span class="badge badge-pending">Open</span></span>
         <span class="tbl-cell" data-label="In Belongo"><span class="badge er-warn">Amount differs</span> <button class="er-link" type="button" data-review="er-d2">Review</button></span>
         <div class="er-diff" id="er-d2" hidden>
-          <div class="er-diff-grid"><div><span>ERP says</span><b>AED 1,420</b></div><div><span>Belongo says</span><b>AED 1,380 (3% of bookings)</b></div><div><span>Difference</span><b>AED 40. Check whether the ERP added a manual adjustment.</b></div></div>
-          <div class="er-diff-acts"><button class="btn btn-primary btn-sm" type="button" data-resolve="er-r2" data-to="Reconciled" data-log="INV-2026-0927 accepted from the ERP. Nadia Farouk commission set to AED 1,420.">Use the ERP value</button><button class="btn btn-secondary btn-sm" type="button" data-keep="er-r2">Keep Belongo value and tell finance</button></div>
+          <div class="er-diff-grid"><div><span>ERPNext says</span><b>AED 1,420</b></div><div><span>Belongo says</span><b>AED 1,380 (3% of bookings)</b></div><div><span>Difference</span><b>AED 40. Check whether the ERP added a manual adjustment.</b></div></div>
+          <div class="er-diff-acts"><button class="btn btn-primary btn-sm" type="button" data-resolve="er-r2" data-to="Reconciled" data-log="INV-2026-0927 accepted from ERPNext. Nadia Farouk commission set to AED 1,420.">Use the ERPNext value</button><button class="btn btn-secondary btn-sm" type="button" data-keep="er-r2">Keep Belongo value and tell finance</button></div>
         </div>
       </div>
 
       <div class="tbl-row" data-s="mis" id="er-r3">
-        <span class="tbl-cell tbl-name" data-label="ERP invoice"><b>INV-2026-0922</b><span>Updated yesterday</span></span>
+        <span class="tbl-cell tbl-name" data-label="Invoice"><b>INV-2026-0922</b><span>Updated yesterday</span></span>
         <span class="tbl-cell" data-label="Counterparty">Outsourced support overflow &middot; UAE</span>
         <span class="tbl-cell" data-label="Where it shows">Expenses</span>
         <span class="tbl-cell tbl-amt" data-label="Amount">AED 24,500</span>
-        <span class="tbl-cell" data-label="ERP status"><span class="badge badge-available">Paid 12 Sep</span></span>
+        <span class="tbl-cell" data-label="ERPNext status"><span class="badge badge-available">Paid 12 Sep</span></span>
         <span class="tbl-cell" data-label="In Belongo"><span class="badge er-warn">Amount differs</span> <button class="er-link" type="button" data-review="er-d3">Review</button></span>
         <div class="er-diff" id="er-d3" hidden>
-          <div class="er-diff-grid"><div><span>ERP says</span><b>AED 24,500, paid 12 Sep</b></div><div><span>Belongo says</span><b>AED 24,000, paid 3 Sep</b></div><div><span>Difference</span><b>AED 500, likely an exchange-rate or fee adjustment.</b></div></div>
-          <div class="er-diff-acts"><button class="btn btn-primary btn-sm" type="button" data-resolve="er-r3" data-to="Reconciled" data-log="INV-2026-0922 accepted from the ERP. Support overflow expense set to AED 24,500.">Use the ERP value</button><button class="btn btn-secondary btn-sm" type="button" data-keep="er-r3">Keep Belongo value and tell finance</button></div>
+          <div class="er-diff-grid"><div><span>ERPNext says</span><b>AED 24,500, paid 12 Sep</b></div><div><span>Belongo says</span><b>AED 24,000, paid 3 Sep</b></div><div><span>Difference</span><b>AED 500, likely an exchange-rate or fee adjustment.</b></div></div>
+          <div class="er-diff-acts"><button class="btn btn-primary btn-sm" type="button" data-resolve="er-r3" data-to="Reconciled" data-log="INV-2026-0922 accepted from ERPNext. Support overflow expense set to AED 24,500.">Use the ERPNext value</button><button class="btn btn-secondary btn-sm" type="button" data-keep="er-r3">Keep Belongo value and tell finance</button></div>
         </div>
       </div>
 
       <div class="tbl-row" data-s="fail" id="er-r4">
-        <span class="tbl-cell tbl-name" data-label="ERP invoice"><b>INV-2026-0935</b><span>Failed 22 min ago</span></span>
+        <span class="tbl-cell tbl-name" data-label="Invoice"><b>INV-2026-0935</b><span>Failed 22 min ago</span></span>
         <span class="tbl-cell" data-label="Counterparty">Host payout &middot; unknown account</span>
         <span class="tbl-cell" data-label="Where it shows">Payouts</span>
         <span class="tbl-cell tbl-amt" data-label="Amount">AED 5,340</span>
-        <span class="tbl-cell" data-label="ERP status"><span class="badge badge-available">Paid 15 Sep</span></span>
+        <span class="tbl-cell" data-label="ERPNext status"><span class="badge badge-available">Paid 15 Sep</span></span>
         <span class="tbl-cell" data-label="In Belongo"><span class="badge er-bad">No matching host</span> <button class="er-link" type="button" data-retry="er-r4">Retry</button></span>
       </div>
 
       <div class="tbl-row" data-s="ok" id="er-r5">
-        <span class="tbl-cell tbl-name" data-label="ERP invoice"><b>INV-2026-0929</b><span>Updated 6 min ago</span></span>
+        <span class="tbl-cell tbl-name" data-label="Invoice"><b>INV-2026-0929</b><span>Updated 6 min ago</span></span>
         <span class="tbl-cell" data-label="Counterparty">Roya Stays &middot; September payout</span>
         <span class="tbl-cell" data-label="Where it shows">Payouts, Financials</span>
         <span class="tbl-cell tbl-amt" data-label="Amount">AED 73,025</span>
-        <span class="tbl-cell" data-label="ERP status"><span class="badge badge-available">Paid 15 Sep</span></span>
+        <span class="tbl-cell" data-label="ERPNext status"><span class="badge badge-available">Paid 15 Sep</span></span>
         <span class="tbl-cell" data-label="In Belongo"><span class="badge badge-available">Reconciled</span></span>
       </div>
       <div class="tbl-row" data-s="ok" id="er-r6">
-        <span class="tbl-cell tbl-name" data-label="ERP invoice"><b>INV-2026-0918</b><span>Updated 2 h ago</span></span>
+        <span class="tbl-cell tbl-name" data-label="Invoice"><b>INV-2026-0918</b><span>Updated 2 h ago</span></span>
         <span class="tbl-cell" data-label="Counterparty">Stripe and local rails</span>
         <span class="tbl-cell" data-label="Where it shows">Expenses</span>
         <span class="tbl-cell tbl-amt" data-label="Amount">AED 108,000</span>
-        <span class="tbl-cell" data-label="ERP status"><span class="badge badge-available">Paid 2 Sep</span></span>
+        <span class="tbl-cell" data-label="ERPNext status"><span class="badge badge-available">Paid 2 Sep</span></span>
         <span class="tbl-cell" data-label="In Belongo"><span class="badge badge-available">Reconciled</span></span>
       </div>
       <div class="tbl-row" data-s="ok" id="er-r7">
-        <span class="tbl-cell tbl-name" data-label="ERP invoice"><b>INV-2026-0915</b><span>Updated 2 h ago</span></span>
+        <span class="tbl-cell tbl-name" data-label="Invoice"><b>INV-2026-0915</b><span>Updated 2 h ago</span></span>
         <span class="tbl-cell" data-label="Counterparty">AWS me-central-1</span>
         <span class="tbl-cell" data-label="Where it shows">Expenses</span>
         <span class="tbl-cell tbl-amt" data-label="Amount">AED 38,000</span>
-        <span class="tbl-cell" data-label="ERP status"><span class="badge badge-available">Paid 1 Sep</span></span>
+        <span class="tbl-cell" data-label="ERPNext status"><span class="badge badge-available">Paid 1 Sep</span></span>
         <span class="tbl-cell" data-label="In Belongo"><span class="badge badge-available">Reconciled</span></span>
       </div>
       <div class="tbl-row" data-s="wait" id="er-r8">
-        <span class="tbl-cell tbl-name" data-label="ERP invoice"><b>Not in ERP yet</b><span>Raised in Belongo today</span></span>
+        <span class="tbl-cell tbl-name" data-label="Invoice"><b>Not in ERPNext yet</b><span>Raised in Belongo today</span></span>
         <span class="tbl-cell" data-label="Counterparty">Partner commissions &middot; week 38</span>
         <span class="tbl-cell" data-label="Where it shows">Partners</span>
         <span class="tbl-cell tbl-amt" data-label="Amount">AED 6,210</span>
-        <span class="tbl-cell" data-label="ERP status"><span class="badge badge-booked">No invoice</span></span>
-        <span class="tbl-cell" data-label="In Belongo"><span class="badge badge-pending">Waiting for ERP</span></span>
+        <span class="tbl-cell" data-label="ERPNext status"><span class="badge badge-booked">No invoice</span></span>
+        <span class="tbl-cell" data-label="In Belongo"><span class="badge badge-pending">Waiting for ERPNext</span></span>
       </div>
     </div>
     <p class="er-note" id="er-empty" hidden>Nothing here. Every invoice in this view is reconciled.</p>
@@ -319,27 +320,27 @@ body { background: var(--color-soft-beige); }
       <section class="er-card" aria-label="Sync log">
         <h2>Sync log</h2>
         <ul class="er-log" id="er-log">
-          <li><time>10:24</time><span>Pulled 4 changed invoices from the ERP. 1 needs review.</span></li>
-          <li><time>10:24</time><span>INV-2026-0929 is Paid in the ERP. Roya Stays September payout marked Paid.</span></li>
-          <li class="is-err"><time>10:02</time><span>INV-2026-0935 failed: no host account matches the ERP vendor code. Add the code to the host record.</span></li>
-          <li><time>09:45</time><span>ERP asked us to slow down. Waited 60 seconds and continued. No data lost.</span></li>
+          <li><time>10:24</time><span>Pulled 4 changed invoices from ERPNext. 1 needs review.</span></li>
+          <li><time>10:24</time><span>INV-2026-0929 is Paid in ERPNext. Roya Stays September payout marked Paid.</span></li>
+          <li class="is-err"><time>10:02</time><span>INV-2026-0935 failed: no host matches the ERPNext Supplier ID. Add the ID to the host record.</span></li>
+          <li><time>09:45</time><span>Webhook for INV-2026-0929 arrived 4 seconds after payment. Scheduled pull confirmed it.</span></li>
           <li><time>09:30</time><span>Pulled 11 changed invoices. All reconciled.</span></li>
         </ul>
       </section>
       <section class="er-card" aria-label="What syncs where">
         <h2>What syncs where</h2>
         <table class="er-map">
-          <thead><tr><th>From the ERP</th><th>Shows up in</th></tr></thead>
+          <thead><tr><th>From ERPNext</th><th>Shows up in</th></tr></thead>
           <tbody>
-            <tr><td>Vendor bill status</td><td>Expenses (a05) and the cost lines in Financials (a02)</td></tr>
-            <tr><td>Host payout invoice</td><td>Payout status for the host, and Financials</td></tr>
-            <tr><td>Partner commission invoice</td><td>Partners (a07), commission totals</td></tr>
-            <tr><td>Paid date and amount</td><td>Reports (a06) and exports</td></tr>
+            <tr><td>Purchase Invoice status</td><td>Expenses (a05) and the cost lines in Financials (a02)</td></tr>
+            <tr><td>Host payout (Purchase Invoice)</td><td>Payout status for the host, and Financials</td></tr>
+            <tr><td>Partner commission (Purchase Invoice)</td><td>Partners (a07), commission totals</td></tr>
+            <tr><td>Payment Entry: paid date and amount</td><td>Reports (a06) and exports</td></tr>
           </tbody>
         </table>
       </section>
     </div>
-    <p class="er-note">Sample data. The real ERP, its API fields and the matching rules are confirmed with the client's finance team before build.</p>
+    <p class="er-note">Sample data. ERPNext document types, field names and the matching rules are confirmed with the client's finance team before build.</p>
   
   </main>
 </div>
@@ -369,15 +370,15 @@ body { background: var(--color-soft-beige); }
     var d = r.querySelector('.er-diff'); if (d) d.hidden = true;
     var act = document.querySelector('.er-tab.is-on'); filter(act.getAttribute('data-f'));
   }
-  document.querySelectorAll('[data-resolve]').forEach(function (b) { b.addEventListener('click', function (e) { stop(e); settle(b.getAttribute('data-resolve'), 'Reconciled', 'badge-available'); bump('er-n-mis', -1); log(b.getAttribute('data-log')); toast('Updated from the ERP. The linked screens now show the ERP value.'); }); });
+  document.querySelectorAll('[data-resolve]').forEach(function (b) { b.addEventListener('click', function (e) { stop(e); settle(b.getAttribute('data-resolve'), 'Reconciled', 'badge-available'); bump('er-n-mis', -1); log(b.getAttribute('data-log')); toast('Updated from ERPNext. The linked screens now show the ERPNext value.'); }); });
   document.querySelectorAll('[data-keep]').forEach(function (b) { b.addEventListener('click', function (e) { stop(e); settle(b.getAttribute('data-keep'), 'Flagged to finance', 'badge-pending'); bump('er-n-mis', -1); log('Kept the Belongo value for ' + $(b.getAttribute('data-keep')).querySelector('.tbl-name b').textContent + '. Finance was notified.'); toast('Kept the Belongo value. Finance has been told about the difference.'); }); });
-  document.querySelectorAll('[data-retry]').forEach(function (b) { b.addEventListener('click', function (e) { stop(e); b.disabled = true; b.textContent = 'Retrying\u2026'; setTimeout(function () { b.disabled = false; b.textContent = 'Retry'; log('INV-2026-0935 failed again: no host account matches the ERP vendor code.', true); toast('Still no matching host. Add the ERP vendor code to the host record, then retry.', { error: true }); }, 1100); }); });
+  document.querySelectorAll('[data-retry]').forEach(function (b) { b.addEventListener('click', function (e) { stop(e); b.disabled = true; b.textContent = 'Retrying\u2026'; setTimeout(function () { b.disabled = false; b.textContent = 'Retry'; log('INV-2026-0935 failed again: no host matches the ERPNext Supplier ID.', true); toast('Still no matching host. Add the ERPNext Supplier ID to the host record, then retry.', { error: true }); }, 1100); }); });
   $('er-sync').addEventListener('click', function (e) {
     stop(e); var b = this; if (b.disabled) return; b.disabled = true; var t = b.textContent; b.textContent = 'Syncing\u2026';
-    setTimeout(function () { b.disabled = false; b.textContent = t; $('er-last').textContent = 'just now'; $('er-next').textContent = '15 min'; log('Manual pull finished. No new changes in the ERP.'); toast('Sync finished. Everything is up to date.'); }, 1500);
+    setTimeout(function () { b.disabled = false; b.textContent = t; $('er-last').textContent = 'just now'; $('er-next').textContent = '15 min'; log('Manual pull finished. No new changes in ERPNext.'); toast('Sync finished. Everything is up to date.'); }, 1500);
   });
   $('er-set-btn').addEventListener('click', function (e) { stop(e); var p = $('er-set'); p.hidden = !p.hidden; this.setAttribute('aria-expanded', !p.hidden); });
-  $('er-test').addEventListener('click', function (e) { stop(e); var b = this; b.disabled = true; b.textContent = 'Testing\u2026'; setTimeout(function () { b.disabled = false; b.textContent = 'Test connection'; toast('Connection works. The ERP answered in 312 ms.'); }, 900); });
+  $('er-test').addEventListener('click', function (e) { stop(e); var b = this; b.disabled = true; b.textContent = 'Testing\u2026'; setTimeout(function () { b.disabled = false; b.textContent = 'Test connection'; toast('Connection works. ERPNext answered in 312 ms.'); }, 900); });
   $('er-save').addEventListener('click', function (e) { stop(e); $('er-set').hidden = true; $('er-set-btn').setAttribute('aria-expanded', 'false'); toast('Connection settings saved.'); });
 })();
 </script>
