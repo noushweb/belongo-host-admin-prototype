@@ -1663,3 +1663,15 @@ body.is-out .rec-line, body.is-out .pd-rec { display: none !important; }
 .ft-pay { display: inline-flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
 .ft-pay i { font-style: normal; font-family: var(--font-mono); font-size: 11px; border: 1px solid rgba(247,246,242,0.25); border-radius: 4px; padding: 3px 7px; color: rgba(247,246,242,0.7); }
 @media (max-width: 960px) { .ft-main { grid-template-columns: minmax(0,1fr); gap: var(--space-8); } .ft-cols { grid-template-columns: repeat(2, minmax(0,1fr)); } .ft-pay { margin-left: 0; } }
+
+/* ===== Dropdown arrows: one clear chevron with room from the border (all native selects) ===== */
+select:not([multiple]):not(.lc-ov) {
+  -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%230D1B2A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important; background-position: right 16px center !important; background-size: 14px 14px !important;
+  padding-right: 44px !important; cursor: pointer;
+}
+.select-wrap::after { display: none !important; }
+/* drawn chevron for button-style dropdowns (replaces the tiny text glyph) */
+.chev { display: inline-block; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); margin-left: 10px; flex: none; opacity: 0.85; }
+.hs-switch-caret { width: 8px; height: 8px; border-right: 2px solid rgba(247,246,242,0.75); border-bottom: 2px solid rgba(247,246,242,0.75); transform: rotate(45deg) translateY(-2px); font-size: 0; margin-right: 6px; flex: none; }
